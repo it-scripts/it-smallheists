@@ -1,8 +1,8 @@
 QBCore = exports['qb-core']:GetCoreObject()
-labActive = false
-mwActive = false
-labCooldown = false
-mwCooldown = false
+local labActive = false
+local mwActive = false
+local labCooldown = false
+local mwCooldown = false
 
 QBCore.Functions.CreateCallback('it-smallheists:server:getHeistStatus', function(_, cb, type)
     if type == "lab" then
@@ -46,7 +46,7 @@ RegisterNetEvent('it-smallheists:server:removeItem', function(item, amount)
     local src = source
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
-    QBCore.Functions.RemoveItem(item, amount)
+    player.Functions.RemoveItem(item, amount)
     TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[item], 'remove')
 end)
 
@@ -54,7 +54,7 @@ RegisterNetEvent('it-smallheists:server:giveItem', function(item, amount)
     local src = source
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
-    QBCore.Functions.AddItem(item, amount)
+    player.Functions.AddItem(item, amount)
     TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[item], 'add')
 end)
 
@@ -68,10 +68,11 @@ RegisterNetEvent('it-smallheists:server:reciveLabPayment', function()
     local reward = Config.LabPayment
 
     for k, v in recItems do
-        Player.Functions.RemoveItem(v, 1)
+        player.Functions.RemoveItem(v, 1)
+        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[v], 'remove')
     end
 
-    Player.Functions.AddMoney(Config.MoneyType, reward, 'Lab heist Payment')
+    player.Functions.AddMoney(Config.MoneyType, reward, 'Lab heist Payment')
 
 end)
 
@@ -84,17 +85,15 @@ RegisterNetEvent('it-smallheists:server:reciveMWPayment', function()
     local reward = Config.MWPayment
 
     for k, v in recItems do
-        Player.Functions.RemoveItem(v, 1)
+        player.Functions.RemoveItem(v, 1)
+        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[v], 'remove')
+
     end
 
-    Player.Functions.AddMoney(Config.MoneyType, reward, 'MW heist Payment')
+    player.Functions.AddMoney(Config.MoneyType, reward, 'MW heist Payment')
  
 end)
 
 RegisterNetEvent('it-smallheists:server:sendLog', function(message)
-
-    local src = source
-    local player = QBCore.Functions.GetPlayer(src)
-
     print('[it-smallheists] '..message)
 end)
