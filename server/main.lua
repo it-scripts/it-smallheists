@@ -90,3 +90,11 @@ RegisterNetEvent('it-smallheists:server:reciveMWPayment', function()
     Player.Functions.AddMoney(Config.MoneyType, reward, 'MW heist Payment')
  
 end)
+
+RegisterNetEvent('it-smallheists:server:sendLog', function(message)
+
+    local src = source
+    local player = QBCore.Functions.GetPlayer(src)
+
+    print('[it-smallheists] '..message)
+end)

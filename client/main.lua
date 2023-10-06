@@ -9,7 +9,6 @@ end)
 
 AddEventHandler('onResourceStop', function(resource)
     if resource ~= GetCurrentResourceName() then return end
-
 end)
 
 function hasItem(items, amount)
@@ -18,23 +17,23 @@ end
 
 function sendMail(mailSender, mailSubject, mailMessage)
     if Config.PhoneScript == 'qb' then
-        TriggerServerEvent('qb-phone:server:sendNewMail', {sender = mailSender, subject = mailSupject,
-            message = mailMessage--"Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!" ,
+        TriggerServerEvent('qb-phone:server:sendNewMail', {sender = mailSender, subject = mailSubject,
+            message = mailMessage, --"Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!" ,
         })
     elseif Config.PhoneScript == 'qs' then
-        TriggerServerEvent('qs-smartphone:server:sendNewMail', {sender = mailSender, subject = mailSupject,
-            message = mailMessage--"Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!" ,
+        TriggerServerEvent('qs-smartphone:server:sendNewMail', {sender = mailSender, subject = mailSubject,
+            message = mailMessage, --"Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!" ,
             button = {}
         })
     elseif Config.PhoneScript == 'road' then
-        TriggerServerEvent('roadphone:receiveMail', {sender = mailSender, subject = mailSupject,
-            message = mailMessage--"Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!" ,
+        TriggerServerEvent('roadphone:receiveMail', {sender = mailSender, subject = mailSubject,
+            message = mailMessage, --"Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!" ,
             image = '/public/html/static/img/icons/app/mail.png',
             button = {}
         })
     elseif Config.PhoneScript == 'gks' then
-        TriggerServerEvent('gksphone:NewMail', {sender = mailSender, image = '/html/static/img/icons/mail.png', subject = mailSupject,
-        message = mailMessage --"Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!" ,
+        TriggerServerEvent('gksphone:NewMail', {sender = mailSender, image = '/html/static/img/icons/mail.png', subject = mailSubject,
+        message = mailMessage, --"Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!" ,
         button = {}
         })
     else

@@ -6,11 +6,11 @@ description 'Rewritten version of qb-miniheists'
 
 version '1.0.0'
 
-shared_scipts {
+shared_scripts {
     'config.lua',
     '@qb-core/shared/locale.lua',
     'locales/en.lua',
-    'locales/*.lua'
+    'locales/de.lua',
 }
 
 
@@ -21,8 +21,8 @@ client_scripts {
 }
 
 server_scripts {
-    'webhooks.lua',
-    'server/*.lua',
+    'server/webhooks.lua',
+    'server/main.lua',
 }
 
 dependencies {

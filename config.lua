@@ -1,7 +1,7 @@
-Config = Config or {}
+Config = {}
 
 --=== PHONE SETTINGS ===--
-Config.PhoneScript = 'qb'
+Config.PhoneScript = 'qs'
 -- qb = qb-phone
 -- qs = quasar smartphone
 -- road = roadphone
@@ -9,7 +9,7 @@ Config.PhoneScript = 'qb'
 
 --=== DEBUG SETTINGS ===--
 Config.Debug = false -- Set to true to enable debug mode
-Config.DebugPoly = false -- Set to true to enable debug mode for PolyZone
+Config.DebugPoly = true -- Set to true to enable debug mode for PolyZone
 
 --=== POLICE SETTINGS ===--
 Config.PoliceRequired = 0 -- Amount of police required to start the heist
@@ -24,14 +24,14 @@ Config.MoneyType = 'cash' -- cash/bank/black_money - Type of money you get from 
 Config.MailTime = 10 -- Time in seconds to wait for the mail to arrive
 
 --=== HACKING SETTINGS ===--
-Config.HackItem = 'laptop_h' -- Item required to start the hacking
-Config.HackingTime = 60 -- Time in seconds for hacking progressbars / Time bevore the MiniGame starts
+Config.HackItem = 'electronickit' -- Item required to start the hacking
+Config.HackingTime = 20 -- Time in seconds for hacking progressbars / Time bevore the MiniGame starts
 
-Config.LabHackType = 'numbers' -- can be alphabet, numeric, alphanumeric, greek, braille, runes
+Config.LabHackType = 'numeric' -- can be alphabet, numeric, alphanumeric, greek, braille, runes
 Config.LabHackTime = 60 -- Time in seconds to hack the Lab door
 Config.BypassHackTime = 60 -- minigame timer for 1 shot to bypass security at secret location to stop guards from spawning inside lab
 
-Config.MWHackType = 'numbers' -- can be alphabet, numeric, alphanumeric, greek, braille, runes
+Config.MWHackType = 'numeric' -- can be alphabet, numeric, alphanumeric, greek, braille, runes
 Config.MWHackTime = 60 -- Time in seconds to hack the MW door
 
 --=== LAB RAID STUFF ===--
@@ -40,7 +40,7 @@ Config.LabHeistTime = 600 -- Time in seconds to complete the heist
 
 Config.LabBoss = { -- Ped for starting the Lab heist you can change every setting for the ped
     model = 's_m_y_westsec_01',
-    location = vector4(3549.0, 3673.0, 28.0, 0.0),
+    location = vector4(2363.2644, 2520.1455, 46.6677, 325.7810),
     scenario = 'WORLD_HUMAN_GUARD_STAND',
 }
 
@@ -76,3 +76,57 @@ Config.LabSecurity = {
     },
 }
 
+
+
+
+
+--=== TRANSLATION ===--
+Translation = {
+    ['labHeist'] = {
+        mail = {
+            sender = "Lugo Bervic",
+            subject = "Bio Research...",
+            messages = {
+                heistStart = "Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!",
+                heistHack = "Great you did it! now head to the Cold Room and bring me some samples of their work and any files you see!",
+                heistEnd = "Now Bring the Research, Samples and Files back to me for your payment!",
+            },
+        },
+        notifications = {
+            noCops = "There currently not enought cops online",
+            activeJob = "You are already doing a heist",
+            location = "You will be emailed shortly with the location",
+            guads = "Guards Alerted!",
+            hackFailed = "You failed Hacking, try again",
+            noHackingDevice = "You have no Hacking Device",
+            cooldown = "The heist is currently on cooldown",
+            activeHeist = "Someone is already doing this heist",
+            canceled = "Canceled...",
+            policeAlert = "Break in at Humane Labs, Laboratory 1!",
+            disabledAlarms = "You Successfully Disabled the alarm system, head on in",
+            failAlarms = "You Failed to disable the alarm system, the guards have been alerted",
+            noTime = "You ran out of time",
+        },
+        progessBars = {
+            pickup = "Getting Job...",
+            firewall = "Bypass Firewall",
+            download = "Downloading Research",
+            files = "Gabbring Samples and Files",
+            security = "Bypassing Security Alarms...",
+            rerouting = "Rerouting Alarm Checks..",
+
+        },
+        blips = {
+            lab = "Bio Research Lab",
+            research = "Research",
+            security = "Security bypass",
+        },
+        target = {
+            startRaidLab = "Start Lab Raid",
+            getPayment = "HandOver Research",
+            hackReseach = "Hack Research Files",
+            samples = "Streal Samples",
+            security = "Bypass Security(1 Shot)"
+        },
+    },
+}
