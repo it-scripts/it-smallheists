@@ -1,43 +1,45 @@
 QBCore = exports['qb-core']:GetCoreObject()
-local labActive = false
-local mwActive = false
-local labCooldown = false
-local mwCooldown = false
+
+
+-- Status:
+-- active = heist is active
+-- cooldown = heist is on cooldown
+-- nil or inactive = heist is inactive
+local heistsStatus = {}
 
 QBCore.Functions.CreateCallback('it-smallheists:server:getHeistStatus', function(_, cb, type)
-    if type == "lab" then
-        cb(labActive)
-    elseif type == "mw" then
-        cb(mwActive)
+    if heistsStatus[type] ~= nil then
+        cb(heistsStatus[type])
+    else
+        heistsStatus[type] = 'inactive'
+        cb('inactive')
     end
 end)
 
 RegisterNetEvent('it-smallheists:server:setHeistStatus', function(type, status)
-    if type == "lab" then
-        labActive = status
-    elseif type == "mw" then
-        mwActive = status
-    end
+    heistsStatus[type] = status
 end)
 
 QBCore.Functions.CreateCallback("it-smallheists:server:isCooldownActive", function(_, cb, type)
-    if type == "lab" then
-        cb(labCooldown)
-    elseif type == "mw" then
-        cb(mwCooldown)
+    if heistsStatus[type] ~= nil then
+        cb(heistsStatus[type])
+    else
+        heistsStatus[type] = false
+        cb(false)
     end
 end)
 
 RegisterNetEvent('it-smallheists:server:heistCooldown', function(type)
+
     if type == "lab" then
-        labCooldown = true
+        heistsStatus[type] = true
         Citizen.SetTimeout(Config.HeistCooldownLab * 1000, function()
-            labCooldown = false
+            heistsStatus[type] = 'inactive'
         end)
     elseif type == "mw" then
-        mwCooldown = true
+        heistsStatus[type] = true
         Citizen.SetTimeout(Config.HeistCooldownMW * 1000, function()
-            mwCooldown = false
+            heistsStatus[type] = 'inactive'
         end)
     end
 end)

@@ -52,6 +52,10 @@ Config.LabRewards = {
     'weapon_pistol_mk2',
 }
 
+Config.LabHackOne = vector3(3536.97, 3669.4, 28.12) -- Location of the first Lab hack
+Config.LabHackTwo = vector3(3559.71, 3673.84, 28.12) -- Location of the second Lab hack
+Config.LabSecurityHack = vector3(3593.82, 3712.27, 29.69) -- Location of the Lab security hack
+
 --== LAB GUARD SETTINGS ==--
 Config.LabGuardAccuracy = 75 -- out of 100 how accurate the guards are (100 = 100%)
 Config.LabGuardWeapons = { -- this must be the weapon hash not just the weapon item name --this randomises between different guns everytime the guards are spawned
@@ -59,7 +63,7 @@ Config.LabGuardWeapons = { -- this must be the weapon hash not just the weapon i
     'WEAPON_COMBATPDW',
 }
 
-Config.LabSecurity = {
+Config.LabSecurity = { -- The security system for the Lab
     ['labpatrol'] = {
         { coords = vector3(3532.46, 3649.46, 27.52), heading = 63.5, model = 's_m_m_fiboffice_02'},
         { coords = vector3(3537.36, 3645.83, 28.13), heading = 46.35, model = 's_m_m_fiboffice_02'},
@@ -73,60 +77,5 @@ Config.LabSecurity = {
         { coords = vector3(3608.93, 3729.39, 29.69), heading = 323.56, model = 's_m_m_fiboffice_02'},
         { coords = vector3(3618.91, 3722.51, 29.69), heading = 85.71, model = 's_m_m_fiboffice_02'},
         { coords = vector3(3596.07, 3703.44, 29.69), heading = 344.89, model = 's_m_m_fiboffice_02'},
-    },
-}
-
-
-
-
-
---=== TRANSLATION ===--
-Translation = {
-    ['labHeist'] = {
-        mail = {
-            sender = "Lugo Bervic",
-            subject = "Bio Research...",
-            messages = {
-                heistStart = "Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!",
-                heistHack = "Great you did it! now head to the Cold Room and bring me some samples of their work and any files you see!",
-                heistEnd = "Now Bring the Research, Samples and Files back to me for your payment!",
-            },
-        },
-        notifications = {
-            noCops = "There currently not enought cops online",
-            activeJob = "You are already doing a heist",
-            location = "You will be emailed shortly with the location",
-            guads = "Guards Alerted!",
-            hackFailed = "You failed Hacking, try again",
-            noHackingDevice = "You have no Hacking Device",
-            cooldown = "The heist is currently on cooldown",
-            activeHeist = "Someone is already doing this heist",
-            canceled = "Canceled...",
-            policeAlert = "Break in at Humane Labs, Laboratory 1!",
-            disabledAlarms = "You Successfully Disabled the alarm system, head on in",
-            failAlarms = "You Failed to disable the alarm system, the guards have been alerted",
-            noTime = "You ran out of time",
-        },
-        progessBars = {
-            pickup = "Getting Job...",
-            firewall = "Bypass Firewall",
-            download = "Downloading Research",
-            files = "Gabbring Samples and Files",
-            security = "Bypassing Security Alarms...",
-            rerouting = "Rerouting Alarm Checks..",
-
-        },
-        blips = {
-            lab = "Bio Research Lab",
-            research = "Research",
-            security = "Security bypass",
-        },
-        target = {
-            startRaidLab = "Start Lab Raid",
-            getPayment = "HandOver Research",
-            hackReseach = "Hack Research Files",
-            samples = "Streal Samples",
-            security = "Bypass Security(1 Shot)"
-        },
     },
 }

@@ -11,8 +11,8 @@ AddEventHandler('onResourceStop', function(resource)
     if resource ~= GetCurrentResourceName() then return end
 end)
 
-function hasItem(items, amount)
-    return QBCore.Functions.HasItem(items, amount)
+function hasItem(item)
+    return QBCore.Functions.HasItem(item)
 end
 
 function sendMail(mailSender, mailSubject, mailMessage)
@@ -51,4 +51,23 @@ function loadModel(model)
         RequestModel(model)
         Citizen.Wait(0)
     end
+end
+
+function createBlip(coords, text, sprite, color, scale, display, shortRange)
+    local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
+    SetBlipSprite(blip, sprite)
+    SetBlipDisplay(blip, display)
+    SetBlipScale(blip, scale)
+    SetBlipColour(blip, color)
+    SetBlipAsShortRange(blip, shortRange)
+    BeginTextCommandSetBlipName("STRING")
+    AddTextComponentString(text)
+    EndTextCommandSetBlipName(blip)
+    return blip
+end
+
+function removeBlip (blip)
+    if blip == nil then return end
+    if not DoesBlipExist(blip) then return end
+    RemoveBlip(blip)
 end

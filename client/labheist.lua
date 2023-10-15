@@ -1,10 +1,17 @@
---local QBCore = exports['qb-core']:GetCoreObject()
+-- Last Modification: 16/10/2023
+-- TODO:
+-- 2. Rework NPC Spawn System
+-- 5. Create a better way to spawn the lab guards
+-- 6. Create a better way to spawn the lab boss
+
+
 local securityBypass = false
 local npcSpawned = false
-local labcoords1 = vector3(3536.97, 3669.4, 28.12)
-local labcoords2 = vector3(3559.71, 3673.84, 28.12)
+local labcoords1 = Config.LabHackOne
+local labcoords2 = Config.LabHackTwo
+local labcoords3 = Config.LabSecurityHack
 local finished = false
-local blips = {targetOne = nil, targetTwo = nil, securityTarget = nil}
+local blips = {}
 local labSecurity = {['wave-one'] = {}, ['wave-two'] = {}, ['wave-extra'] = {}}
 
 local heistTime = Config.LabHeistTime
@@ -16,7 +23,7 @@ local mailTime = Config.MailTime * 1000
 Citizen.CreateThread(function()
     exports['qb-target']:SpawnPed({
         model = Config.LabBoss.model,
-        coords = Config.LabBoss.location, 
+        coords = Config.LabBoss.location,  
         minusOne = true, -- Set this to true if your ped is hovering above the ground but you want it on the ground (OPTIONAL)
         freeze = true,
         invincible = true,
@@ -57,40 +64,41 @@ function startLabRaid()
         QBCore.Functions.Notify(Translation['labHeist'].notifications.activeJob, "error")
         return
     end
-    QBCore.Functions.TriggerCallback('it-smallheists:server:getHeistStatus', function(isActive)
+    QBCore.Functions.TriggerCallback('it-smallheists:server:getHeistStatus', function(status)
+        local isActive = false
+        if status == 'inactive' then
+            isActive = false
+        else
+            isActive = true
+        end
+
         if not isActive then
-            QBCore.Functions.TriggerCallback('it-smallheists:server:isCooldownActive', function(isOnCooldown)
-                if not isOnCooldown then
+            
+            activeJob = true
+            finished = false
+            cleanUpLabHeist(true)
+            TriggerEvent('animations:client:EmoteCommandStart', {"type"})
+            TriggerServerEvent('it-smallheists:server:setHeistStatus', 'lab', true)
 
-                    activeJob = true
-                    finished = false
-                    cleanUpLabHeist(true)
-                    TriggerEvent('animations:client:EmoteCommandStart', {"type"})
-                    TriggerServerEvent('it-smallheists:server:setHeistStatus', 'lab', true)
+            QBCore.Functions.Progressbar('pickup', Translation['labHeist'].progessBars.pickup, hackingTime, false, true, {
+                disableMovement = true,
+                disableCarMovement = true,
+                disableMouse = false,
+            }, {}, {}, {}, function() -- Done
 
-                    QBCore.Functions.Progressbar('pickup', Translation['labHeist'].progessBars.pickup, hackingTime, false, true, {
-                        disableMovement = true,
-                        disableCarMovement = true,
-                        disableMouse = false,
-                        disableCombat = true,
-                    }, {}, {}, {}, function() -- Done
+                TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+                QBCore.Functions.Notify(Translation['labHeist'].notifications.location, 'primary')
+                Wait(mailTime)
+                sendMail(Translation['labHeist'].mail.sender, Translation['labHeist'].mail.subject, Translation['labHeist'].mail.messages.heistStart)
+                exportTarget('targetOne')
+                exportTarget('securityTarget')
 
-                        TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-                        QBCore.Functions.Notify(Translation['labHeist'].notifications.location, 'primary')
-                        Wait(mailTime)
-                        sendMail(Translation['labHeist'].mail.sender, Translation['labHeist'].mail.subject, Translation['labHeist'].mail.messages.heistStart)
-                        exportTarget('targetOne')
-                        exportTarget('securityTarget')
+                SetNewWaypoint(labcoords1)
 
-                        SetNewWaypoint(labcoords1)
-
-                    end, function() -- Cancel
-                        QBCore.Functions.Notify(Translation['labHeist'].notifications.canceled, 'error')
-                    end)
-                else 
-                    QBCore.Functions.Notify(Translation['labHeist'].notifications.cooldown, "error")
-                end
-            end, "lab")
+            end, function() -- Cancel
+                QBCore.Functions.Notify(Translation['labHeist'].notifications.canceled, 'error')
+            end)
+                
         else 
             QBCore.Functions.Notify(Translation['labHeist'].notifications.activeHeist, "error")
         end
@@ -98,7 +106,7 @@ function startLabRaid()
 end
 
 function startLabHack()
-    local hasItem = QBCore.Functions.HasItem(Config.HackItem)
+    local hasItem = hasItem(Config.HackItem)
     if hasItem then
         TriggerServerEvent('it-smallheists:server:removeItem', Config.HackItem, 1)
         TriggerEvent('animations:client:EmoteCommandStart', {"type"})
@@ -117,7 +125,6 @@ function startLabHack()
                         disableMovement = true,
                         disableCarMovement = true,
                         disableMouse = false,
-                        disableCombat = true,
                     }, {}, {}, {}, function() --Done
                         TriggerEvent('animations:client:EmoteCommandStart', {"c"})
                         if Config.PoliceAlertLab then
@@ -158,7 +165,6 @@ function startLabHack2()
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
-        disableCombat = true,
     }, {}, {}, {}, function()
         TriggerEvent('animations:client:EmoteCommandStart', {"c"})
         TriggerServerEvent('it-miniheists:server:giveItem', 'lab-samples', 1)
@@ -179,7 +185,7 @@ function startLabHack2()
 end
 
 function bypassLabGuardAlarm()
-    local hasItem = QBCore.Functions.HasItem(Config.HackItem)
+    local hasItem = hasItem(Config.HackItem)
     if hasItem then
         TriggerServerEvent('it-miniheists:server:removeItem', Config.HackItem, 1)
         TriggerEvent('animations:client:EmoteCommandStart', {"type"})
@@ -187,7 +193,6 @@ function bypassLabGuardAlarm()
             disableMovement = true,
             disableCarMovement = true,
             disableMouse = false,
-            disableCombat = true,
         }, {}, {}, {}, function() --Done
             TriggerEvent('animations:client:EmoteCommandStart', {"type"})
             exports['ps-ui']:Scrambler(function(success)
@@ -199,7 +204,6 @@ function bypassLabGuardAlarm()
                         disableMovement = true,
                         isableCarMovement = true,
                         disableMouse = false,
-                        disableCombat = true,
                     }, {}, {}, {}, function() -- Done
                         TriggerEvent('animations:client:EmoteCommandStart', {"c"})
                         QBCore.Functions.Notify(Translation['labHeist'].notifications.disabledAlarms, 'primary', 8000)
@@ -314,7 +318,7 @@ function exportTarget(targetLocation)
                     action = function()
                         startLabHack()
                     end,
-                    icon = "fas fa-usb",
+                    icon = "fab fa-usb",
                     label = Translation['labHeist'].target.hackReseach,
                     -- item = Config.HackItem,
                 },
@@ -322,16 +326,7 @@ function exportTarget(targetLocation)
             distance = 2.0
         })
 
-        blips.targetOne = AddBlipForCoord(labcoords1.x, labcoords1.y, labcoords1.z)
-        SetBlipSprite(blips.targetOne, 1)
-        SetBlipDisplay(blips.targetOne, 6)
-        SetBlipScale(blips.targetOne, 0.7)
-        SetBlipColour(blips.targetOne, 5)
-        SetBlipAsShortRange(blips.targetOne, true)
-
-        BeginTextCommandSetBlipName("STRING")
-        AddTextComponentString(Translation['labHeist'].blips.lab) -- LANG
-        EndTextCommandSetBlipName(blips.targetOne)
+        blips.targetOne = createBlip(labcoords1, Translation['labHeist'].blips.lab, 1, 5, 0.7, 6, true)
 
     elseif targetLocation == 'targetTwo' then
         exports['qb-target']:AddBoxZone("hack-lab2", labcoords2, 3, 3, {
@@ -351,19 +346,10 @@ function exportTarget(targetLocation)
             distance = 2.0
         })
 
-        blips.targetTwo = AddBlipForCoord(labcoords2.x, labcoords2.y, labcoords2.z)
-        SetBlipSprite(blips.targetTwo, 1)
-        SetBlipDisplay(blips.targetTwo, 6)
-        SetBlipScale(blips.targetTwo, 0.7)
-        SetBlipColour(blips.targetTwo, 5)
-        SetBlipAsShortRange(blips.targetTwo, true)
-
-        BeginTextCommandSetBlipName("STRING")
-        AddTextComponentString(Translation['labHeist'].blips.research) -- LANG
-        EndTextCommandSetBlipName(blips.targetTwo)
+        blips.targetTwo = createBlip(labcoords2, Translation['labHeist'].blips.research, 1, 5, 0.7, 6, true)
 
     elseif targetLocation == 'securityTarget' then
-        exports['qb-target']:AddBoxZone("sec-target-bypass", vector3(3605.52, 3636.59, 41.34), 3, 3, {
+        exports['qb-target']:AddBoxZone("sec-target-bypass", labcoords3, 3, 3, {
             name= "sec-target-bypass",
             heading= 262,
             debugpoly = Config.DebugPoly,
@@ -381,16 +367,7 @@ function exportTarget(targetLocation)
             distance = 2.0
         })
 
-        blips.securityTarget = AddBlipForCoord(3605.52, 3636.59, 41.34)
-        SetBlipSprite(blips.securityTarget, 1)
-        SetBlipDisplay(blips.securityTarget, 6)
-        SetBlipScale(blips.securityTarget, 0.7)
-        SetBlipColour(blips.securityTarget, 5)
-        SetBlipAsShortRange(blips.securityTarget, true)
-
-        BeginTextCommandSetBlipName("STRING")
-        AddTextComponentString(Translation['labHeist'].blips.security) -- LANG
-        EndTextCommandSetBlipName(blips.securityTarget)
+        blips.securityTarget = createBlip(labcoords3, Translation['labHeist'].blips.security, 1, 5, 0.7, 6, true)
     end
 end
 
