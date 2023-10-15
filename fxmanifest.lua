@@ -8,9 +8,7 @@ version '1.0.0'
 
 shared_scripts {
     'config.lua',
-    '@qb-core/shared/locale.lua',
-    'locales/en.lua',
-    'locales/de.lua',
+    'translation.lua'
 }
 
 
@@ -27,7 +25,8 @@ server_scripts {
 
 dependencies {
     'qb-core',
-    'PolyZone'
+    'PolyZone',
+    'ps-ui',
 }
 
 lua54 'yes'
