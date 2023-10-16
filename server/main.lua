@@ -78,23 +78,21 @@ RegisterNetEvent('it-smallheists:server:reciveLabPayment', function()
 
 end)
 
-RegisterNetEvent('it-smallheists:server:reciveMWPayment', function()
+QBCore.Functions.CreateCallback('it-smallheists:server:getPlayerMoney', function(source, cb, type)
     local src = source
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
-
-    local recItems = {'mw-usb'}
-    local reward = Config.MWPayment
-
-    for k, v in recItems do
-        player.Functions.RemoveItem(v, 1)
-        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[v], 'remove')
-
-    end
-
-    player.Functions.AddMoney(Config.MoneyType, reward, 'MW heist Payment')
- 
+    local money = player.PlayerData.money[type]
+    cb(money)
 end)
+
+RegisterNetEvent('it-smallheists:Server:removeMoney', function(type, amount, reason)
+    local src = source
+    local player = QBCore.Functions.GetPlayer(src)
+    if not player then return end
+    player.Functions.RemoveMoney(type, amount, reason)
+end)
+
 
 RegisterNetEvent('it-smallheists:server:sendLog', function(message)
     print('[it-smallheists] '..message)

@@ -2,7 +2,6 @@
 -- TODO:
 -- 6. Create a better way to spawn the lab boss
 
-
 local securityBypass = false
 local npcSpawned = false
 local labcoords1 = Config.LabHackOne
@@ -18,7 +17,7 @@ local hackingTime = Config.HackingTime * 1000
 local mailTime = Config.MailTime * 1000
 
 -- This will spawn the Lab Boss
-Citizen.CreateThread(function()
+CreateThread(function()
     exports['qb-target']:SpawnPed({
         model = Config.LabBoss.model,
         coords = Config.LabBoss.location,  
