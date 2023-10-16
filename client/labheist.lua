@@ -1,7 +1,5 @@
 -- Last Modification: 16/10/2023
 -- TODO:
--- 2. Rework NPC Spawn System
--- 5. Create a better way to spawn the lab guards
 -- 6. Create a better way to spawn the lab boss
 
 
@@ -12,7 +10,7 @@ local labcoords2 = Config.LabHackTwo
 local labcoords3 = Config.LabSecurityHack
 local finished = false
 local blips = {}
-local labSecurity = {['wave-one'] = {}, ['wave-two'] = {}, ['wave-extra'] = {}}
+local labSecurity = {}
 
 local heistTime = Config.LabHeistTime
 
@@ -57,7 +55,7 @@ end)
 
 
 function startLabRaid()
-    --if currentCops <= Config.PoliceRequired then
+    --if currentCops >= Config.PoliceRequired then
         --QBCore.Functions.Notify(Lang:t{labHeist.notifications.noCops}, "error") -- LANG
         --return
     if activeJob then
@@ -78,7 +76,7 @@ function startLabRaid()
             finished = false
             cleanUpLabHeist(true)
             TriggerEvent('animations:client:EmoteCommandStart', {"type"})
-            TriggerServerEvent('it-smallheists:server:setHeistStatus', 'lab', true)
+            TriggerServerEvent('it-smallheists:server:setHeistStatus', 'lab', 'active')
 
             QBCore.Functions.Progressbar('pickup', Translation['labHeist'].progessBars.pickup, hackingTime, false, true, {
                 disableMovement = true,
@@ -133,7 +131,7 @@ function startLabHack()
                         TriggerServerEvent('it-smallheists:server:giveItem', 'lab-usb', 1)
                         if securityBypass == false then
                             QBCore.Functions.Notify(Translation['labHeist'].notifications.guads, 'error', 2000)
-                            spawnLabGuards('one')
+                            spawnLabGuards()
                         end
 
                         sendMail(Translation['labHeist'].mail.sender, Translation['labHeist'].mail.subject, Translation['labHeist'].mail.messages.heistHack)
@@ -146,7 +144,7 @@ function startLabHack()
                     QBCore.Functions.Notify(Translation['labHeist'].notifications.hackFailed, 'error', 5000)
                     if securityBypass == false then
                         QBCore.Functions.Notify(Translation['labHeist'].notifications.guads, 'error', 2000)
-                        spawnLabGuards('one')
+                        spawnLabGuards()
                     end
                 end
             end, Config.LabHackType, Config.LabHackTime, 0)
@@ -172,7 +170,7 @@ function startLabHack2()
 
         if securityBypass == false then
             QBCore.Functions.Notify(Translation['labHeist'].notifications.guads, 'error', 2000)
-            spawnLabGuards('two')
+            spawnLabGuards()
         end
 
         Wait(mailTime)
@@ -213,7 +211,7 @@ function bypassLabGuardAlarm()
                 else
                     TriggerEvent('animations:client:EmoteCommandStart', {"c"})
                     QBCore.Functions.Notify(Translation['labHeist'].notifications.failAlarms, 'error', 5000)
-                    spawnLabGuards('extra')
+                    spawnLabGuards()
                     removeTarget('securityTarget')
                 end
             end, Config.LabHackType, Config.BypassHackTime, 0)
@@ -237,37 +235,28 @@ function cleanUpLabHeist(clearPeds)
     finished = true
 
     TriggerServerEvent('it-smallheists:server:heistCooldown', 'lab')
-    TriggerServerEvent('it-smallheists:server:setHeistStatus', 'lab', false)
+    TriggerServerEvent('it-smallheists:server:setHeistStatus', 'lab', 'inactive')
 
     if clearPeds then
-        if next(labSecurity['wave-one']) ~= nil then
-            for k, v in pairs(labSecurity['wave-one']) do
-                if DoesEntityExist(v) then
-                    DeleteEntity(v)
+        -- Clear everyList in the labSecurity table
+        for k, v in pairs(labSecurity) do
+            if next(labSecurity[k]) ~= nil then
+                for k, v in pairs(labSecurity[k]) do
+                    if DoesEntityExist(v) then
+                        DeleteEntity(v)
+                    end
                 end
-            end
-        end
-        if next(labSecurity['wave-two']) ~= nil then
-            for k, v in pairs(labSecurity['wave-two']) do
-                if DoesEntityExist(v) then
-                    DeleteEntity(v)
-                end
-            end
-        end
-        if next(labSecurity['wave-extra']) ~= nil then
-            if DoesEntityExist(v) then
-                DeleteEntity(v)
             end
         end
     end
 end
 
 
-function spawnLabGuards(waveName)
+function spawnLabGuards()
 
     local ped = PlayerPedId()
     local randomGun = Config.LabGuardWeapons[math.random(1, #Config.LabGuardWeapons)]
-    local wave = 'wave-'..waveName
+    local waveID = 'wave-'..math.random(1, 9999)
 
     SetPedRelationshipGroupHash(ped, 'PLAYER')
     AddRelationshipGroup('labPatrol')
