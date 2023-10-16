@@ -71,13 +71,3 @@ function removeBlip (blip)
     if not DoesBlipExist(blip) then return end
     RemoveBlip(blip)
 end
-
-function checkMoney(type, amount)
-QBCore.Functions.TriggerCallback('it-smallheists:server:getPlayerMoney', function(money)
-    if money >= amount then
-        return true
-    else
-        return false
-    end
-end, type)
-end

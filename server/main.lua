@@ -30,15 +30,14 @@ QBCore.Functions.CreateCallback("it-smallheists:server:isCooldownActive", functi
 end)
 
 RegisterNetEvent('it-smallheists:server:heistCooldown', function(type)
-
-    if type == "lab" then
-        heistsStatus[type] = true
-        Citizen.SetTimeout(Config.HeistCooldownLab * 1000, function()
+    if type == "container" then
+        heistsStatus[type] = 'cooldown'
+        Citizen.SetTimeout(Config.HeistCooldownContainer * 1000, function()
             heistsStatus[type] = 'inactive'
         end)
-    elseif type == "mw" then
-        heistsStatus[type] = true
-        Citizen.SetTimeout(Config.HeistCooldownMW * 1000, function()
+    elseif type == "lab" then
+        heistsStatus[type] = 'cooldown'
+        Citizen.SetTimeout(Config.HeistCooldownLab * 1000, function()
             heistsStatus[type] = 'inactive'
         end)
     end
@@ -96,4 +95,10 @@ end)
 
 RegisterNetEvent('it-smallheists:server:sendLog', function(message)
     print('[it-smallheists] '..message)
+end)
+
+
+RegisterNetEvent('it-smallheists:server:alertCops')
+AddEventHandler('it-smallheists:server:alertCops', function(coords, message)
+TriggerEvent('emergencydispatch:emergencycall:new', "police", message, vector3(coords.x, coords.y, coords.z), true)
 end)

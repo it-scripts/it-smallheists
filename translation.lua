@@ -52,4 +52,28 @@ Translation = {
             lockpick = "Lockpick",
         },
     },
+    ['containerHeist'] = {
+        mail = {
+            sender = "Purux",
+            subject = "Container..",
+            messages = {
+                loactions = "Here are the location of the containers: <br/> LOCATIONS: <br/>",
+            },
+        },
+        notifications = {
+            noMoney = "You dont have enough money",
+            noItem = "You dont have the required item",
+            itemBreak = "Your lockpick broke",
+            finished = "You finished the heist",
+
+        },
+        progessBars = {
+            pickup = "Getting Job...",
+            loot = "Looting Container",
+        },
+        target = {
+            container = "Open Container",
+        },
+        policeAlert = "Someone trys to open the container at the docks"
+    }
 }
