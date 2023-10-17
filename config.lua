@@ -9,7 +9,7 @@ Config.PhoneScript = 'qs'
 
 --=== DEBUG SETTINGS ===--
 Config.Debug = false -- Set to true to enable debug mode
-Config.DebugPoly = true -- Set to true to enable debug mode for PolyZone
+Config.DebugPoly = false -- Set to true to enable debug mode for PolyZone
 
 --=== POLICE SETTINGS ===--
 Config.PoliceRequired = 0 -- Amount of police required to start the heist
@@ -37,7 +37,7 @@ Config.LabHeistTime = 600 -- Time in seconds to complete the heist
 
 Config.LabBoss = { -- Ped for starting the Lab heist you can change every setting for the ped
     model = 's_m_y_westsec_01',
-    location = vector4(2363.2644, 2520.1455, 46.6677, 325.7810),
+    location = vector4(-461.8048, 1100.7955, 327.6819, 162.7813),
 }
 
 Config.LabPayment = math.random(100000, 200000) -- Amount of money you get from the heist set this to 0 to disable money reward
@@ -82,7 +82,7 @@ Config.LabSecurity = { -- The security system for the Lab
 Config.ContainerHeistTime = 600 -- Time in seconds to complete the heist
 Config.ContainerBoss = {
     model = 'cs_floyd',
-    location = vector4(723.0292, -838.2554, 24.4890, 272.4795),
+    location = vector4(675.0380, -2725.8582, 7.1711, 178.8531),
 }
 
 Config.ContainerItem = 'lockpick' -- Item required to open a container
