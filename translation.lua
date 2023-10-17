@@ -10,6 +10,7 @@ Translation = {
             canceled = "Canceled...",
             noTime = "You took too long, I'm looking for someone new for the mission",
             noItem = "You need a %s to do this", -- %s = item name
+            noPhone = "You need a phone to do this",
         },
     },
     ['labHeist'] = {

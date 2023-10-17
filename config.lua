@@ -6,6 +6,12 @@ Config.PhoneScript = 'qs'
 -- qs = quasar smartphone
 -- road = roadphone
 -- gks = gks phone
+-- none = no phone script
+
+Config.PhoneNames = { -- Add the item names of your phones here
+    'phone',
+    'black_phone',
+}
 
 --=== DEBUG SETTINGS ===--
 Config.Debug = false -- Set to true to enable debug mode

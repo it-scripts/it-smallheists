@@ -15,6 +15,16 @@ function hasItem(item)
     return QBCore.Functions.HasItem(item)
 end
 
+function hasPhone()
+    if Config.PhoneScript == 'none' then return true end
+    for k, v in Config.PhoneNames do
+        if hasItem(v) then
+            return true
+        end
+    end
+    return false
+end
+
 function sendMail(mailSender, mailSubject, mailMessage)
     if Config.PhoneScript == 'qb' then
         TriggerServerEvent('qb-phone:server:sendNewMail', {sender = mailSender, subject = mailSubject,

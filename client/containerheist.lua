@@ -40,6 +40,11 @@ function startContainerHeist()
         QBCore.Functions.Notify(Translation['universal'].notifications.activeJob, "error")
         return
     end
+    if not hasPhone() then
+        QBCore.Functions.Notify(Translation['universal'].notifications.noPhone, "error")
+        return
+    end
+
     QBCore.Functions.TriggerCallback('it-smallheists:server:getHeistStatus', function(status)
         print(status)
         if status == 'cooldown' then

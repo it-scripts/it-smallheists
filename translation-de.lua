@@ -14,6 +14,7 @@ Translation = {
             canceled = "Abgebrochen...",
             noTime = "Du hast zu lange gebraucht, ich suche mit jemand anderen für die Mission",
             noItem = "Du braucht ein %s um das zu machen", -- %s = item name
+            noPhone = "Du brauchst ein Handy für diese Mission",
         },
     },
     ['labHeist'] = {
