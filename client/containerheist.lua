@@ -182,10 +182,10 @@ end
 
 function removeAllContainerTargets()
     if containers ~= nil then
+        if #containers == 0 then return end
+        if not next(containers) then return end
         for k, v in ipairs(containers) do
-            if next(containers) ~= nil then
-                exports['qb-target']:RemoveZone('container-'..k)
-            end
+            exports['qb-target']:RemoveZone('container-'..k)
         end
     end
     containers = {}
