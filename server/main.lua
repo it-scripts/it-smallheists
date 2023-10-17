@@ -102,3 +102,24 @@ RegisterNetEvent('it-smallheists:server:alertCops')
 AddEventHandler('it-smallheists:server:alertCops', function(coords, message)
 TriggerEvent('emergencydispatch:emergencycall:new', "police", message, vector3(coords.x, coords.y, coords.z), true)
 end)
+
+--== Update Alerts ==--
+local updatePath
+local resourceName
+
+local function checkVersion(err,responseText, headers)
+    local curVersion = LoadResourceFile(GetCurrentResourceName(), "version")
+    if responseText == nil then print('^1['..resourceName..']^3 ERROR: ^0Failed to check for update.]') return end
+    if curVersion ~= nil and responseText ~= nil then
+        if curVersion == responseText then Color = "^2" else Color = "^1" end
+        print('\n^1['..resourceName..']----------------------------------------------------------------------------------^7')
+        print('^1['..resourceName..']^3 Latest Version is: ^2'..responseText..'!\n^7Your current version:'..Color..''..curVersion..'^7\nIF needed, update from https://github.com/'..updatePath..'')
+        print('\n^1['..resourceName..']----------------------------------------------------------------------------------^7')
+    end
+end
+
+CreateThread(function()
+    updatePath = "inseltreff-net/it-smallheists"
+    resourceName = GetCurrentResourceName()
+    PerformHttpRequest("https://raw.githubusercontent.com/"..updatePath.."/master/version", checkVersion, "GET")
+end)
