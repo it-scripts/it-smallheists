@@ -8,7 +8,8 @@ version '1.1.0'
 
 shared_scripts {
     'config.lua',
-    'translation.lua'
+    'translation.lua',
+    --'translation-de.lua'
 }
 
 

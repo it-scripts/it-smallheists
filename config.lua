@@ -92,16 +92,14 @@ Config.BreakChange = 50 -- Chance in % to break the item while opening a contain
 
 Config.ContainerFee = math.random(1000, 5000) -- Amount of money you have to pay to get container locations
 
-Config.MinContainer = 2 -- Minimum amount of containers to break
-Config.MaxContainer = 4 -- Maximum amount of containers to break
-
-
 --== CONTAINER MINIGAME SETTINGS ==--
 Config.ContainerMinigameTime = 8 -- Time in seconds for the minigame
 Config.ContainerNumberOfCircles = 4 -- Number of circles in the minigame
 
 
 --== CONTAINER == --
+Config.MinContainer = 2 -- Minimum amount of containers to break
+Config.MaxContainer = 4 -- Maximum amount of containers to break
 Config.LootAmount = {min = 1, max = 3}
 Config.Container = {
     [1] = {coords = vector3(896.4028, -3023.6819, 5.9020), location = 'D5 West/2', loot = {'sandwich'}},

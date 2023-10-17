@@ -1,29 +1,34 @@
 --=== TRANSLATION ===--
 Translation = {
+    ['universal'] = {
+        notifications = {
+            notEnoughtPolice = "Currently there are not enough police officers on duty",
+            activeJob = "You are already on a mission right now, finish it first",
+            location = "You will receive an email with the location shortly",
+            cooldown = "Sorry, I don't have a mission right now, check back later",
+            activeHeist = "Sorry, I have already given someone else this mission",
+            canceled = "Canceled...",
+            noTime = "You took too long, I'm looking for someone new for the mission",
+            noItem = "You need a %s to do this", -- %s = item name
+        },
+    },
     ['labHeist'] = {
         mail = {
             sender = "Lugo Bervic",
             subject = "Bio Research...",
             messages = {
-                heistStart = "Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!",
-                heistHack = "Great you did it! now head to the Cold Room and bring me some samples of their work and any files you see!",
+                heistStart = "Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> I will email again when I see the firewall is down!",
+                heistHack = "Great you did it! Now head to the Cold Room and bring me some samples of their work and any files you see!",
                 heistEnd = "Now Bring the Research, Samples and Files back to me for your payment!",
             },
         },
         notifications = {
-            noCops = "There currently not enought cops online",
-            activeJob = "You are already doing a heist",
-            location = "You will be emailed shortly with the location",
             guads = "Guards Alerted!",
             hackFailed = "You failed Hacking, try again",
             noHackingDevice = "You have no Hacking Device",
-            cooldown = "The heist is currently on cooldown",
-            activeHeist = "Someone is already doing this heist",
-            canceled = "Canceled...",
             policeAlert = "Break in at Humane Labs, Laboratory 1!",
             disabledAlarms = "You Successfully Disabled the alarm system, head on in",
             failAlarms = "You Failed to disable the alarm system, the guards have been alerted",
-            noTime = "You ran out of time",
             successLoot = "You Successfully open the create",
             failLoot = "You Failed open the create and ",
             noLootDevice = "You have no Loot Device",
@@ -65,6 +70,7 @@ Translation = {
             noItem = "You dont have the required item",
             itemBreak = "Your lockpick broke",
             finished = "You finished the heist",
+            failLoot = "You failed to open the container",
 
         },
         progessBars = {
@@ -72,6 +78,7 @@ Translation = {
             loot = "Looting Container",
         },
         target = {
+            startHeist = "Get Tip (%s$)", -- %s = amount
             container = "Open Container",
         },
         policeAlert = "Someone trys to open the container at the docks"

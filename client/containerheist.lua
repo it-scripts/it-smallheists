@@ -8,26 +8,29 @@ local heistTime = Config.ContainerHeistTime
 local mailTime = Config.MailTime * 1000
 
 
-CreateThread(function()
-    exports['qb-target']:SpawnPed({
-        model = Config.ContainerBoss.model,
-        coords = Config.ContainerBoss.location,
-        minusOne = true,
-        freeze = true,
-        invincible = true,
-        blockevents = true,
-        scenario = Config.ContainerBoss.scenario,
-        target = {
-            options = {
-                {
-                    icon = 'fas fa-comment',
-                    label = 'Get Tip ('..containerFee..'$)',
-                    type = 'client',
-                    event = 'it-smallheists:client:startContainerHeist',
-                },
+Citizen.CreateThread(function()
+
+    --RequestAndLoadModel(Config.ContainerBoss.model)
+    RequestModel(Config.ContainerBoss.model)
+    while not HasModelLoaded(Config.ContainerBoss.model) do
+    Wait(0)
+    end
+    print('Model loaded: '..Config.ContainerBoss.model)
+    local ped = CreatePed(0, Config.ContainerBoss.model, Config.ContainerBoss.location.x, Config.ContainerBoss.location.y, Config.ContainerBoss.location.z - 1, Config.ContainerBoss.location.w, false, false)
+    FreezeEntityPosition(ped, true)
+    SetEntityInvincible(ped, true)
+    SetBlockingOfNonTemporaryEvents(ped, true)
+
+    exports['qb-target']:AddTargetEntity(ped, {
+        options = {
+            {
+                type = 'client',
+                label = Translation['containerHeist'].target.startHeist:format(containerFee), -- LANG
+                icon = 'fas fa-comment',
+                event = 'it-smallheists:client:startContainerHeist',
             },
-            distance = 2.5
         },
+        distance = 2.5
     })
 end)
 
@@ -40,13 +43,16 @@ end)
 
 function startContainerHeist()
     if activeJob then
-        QBCore.Functions.Notify(Translation['labHeist'].notifications.activeJob, "error")
+        QBCore.Functions.Notify(Translation['universal'].notifications.activeJob, "error")
         return
     end
     QBCore.Functions.TriggerCallback('it-smallheists:server:getHeistStatus', function(status)
         print(status)
-        if status ~= 'inactive' then
-            QBCore.Functions.Notify(Translation['labHeist'].notifications.activeHeist, "error")
+        if status == 'cooldown' then
+            QBCore.Functions.Notify(Translation['universal'].notifications.cooldown, "error")
+            return
+        elseif status == 'active' then
+            QBCore.Functions.Notify(Translation['universal'].notifications.activeHeist, "error")
             return
         end
 
@@ -62,9 +68,9 @@ function startContainerHeist()
             activeJob = true
             finished = false
             TriggerEvent('animations:client:EmoteCommandStart', {"crossarms"})
-            TriggerServerEvent('it-smallheists:server:setHeistStatus', 'container', true)
+            TriggerServerEvent('it-smallheists:server:setHeistStatus', 'container', 'active')
 
-            QBCore.Functions.Progressbar('pickup', Translation['labHeist'].progessBars.pickup, 5000, false, true, {
+            QBCore.Functions.Progressbar('pickup', Translation['containerHeist'].progessBars.pickup, 5000, false, true, {
                 disableMovement = true,
                 disableCarMovement = true,
                 disableMouse = false,
@@ -83,12 +89,12 @@ function startContainerHeist()
                 createContainerTargets()
 
                 TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-                QBCore.Functions.Notify(Translation['labHeist'].notifications.location, 'primary')
+                QBCore.Functions.Notify(Translation['universal'].notifications.location, 'primary')
                 Wait(mailTime)
                 sendMail(Translation['containerHeist'].mail.sender, Translation['containerHeist'].mail.subject, Translation['containerHeist'].mail.messages.loactions..locationString)
 
             end, function() -- Cancel
-                QBCore.Functions.Notify(Translation['labHeist'].notifications.canceled, 'error')
+                QBCore.Functions.Notify(Translation['universal'].notifications.canceled, 'error')
             end)
         end, 'cash')
     end, 'container')
@@ -97,7 +103,7 @@ end
 function openContainer(contID)
     local hasItem = hasItem(Config.ContainerItem)
     if not hasItem then
-        QBCore.Functions.Notify(Translation['containerHeist'].notifications.noItem, "error")
+        QBCore.Functions.Notify(Translation['universal'].notifications.noItem:format(Config.ContainerItem), "error")
         return
     end
 
@@ -106,7 +112,7 @@ function openContainer(contID)
     TriggerEvent('animations:client:EmoteCommandStart', {"weld"})
     exports['ps-ui']:Circle(function(success)
         if success then
-            QBCore.Functions.Progressbar('lab_sec', Translation['labHeist'].progessBars.loot, 5000, false, true, {
+            QBCore.Functions.Progressbar('loot_container', Translation['containerHeist'].progessBars.loot, 10000, false, true, {
                 disableMovement = true,
                 disableCarMovement = true,
                 disableMouse = false,
@@ -136,12 +142,12 @@ function openContainer(contID)
                     activeJob = false
                 end
             end, function() -- Cancel
-                QBCore.Functions.Notify(Translation['labHeist'].notifications.canceled, 'error')
+                QBCore.Functions.Notify(Translation['universal'].notifications.canceled, 'error')
             end)
         else
             TriggerEvent('animations:client:EmoteCommandStart', {"c"})
             TriggerServerEvent('it-smallheists:server:removeItem', Config.ContainerItem, 1)
-            QBCore.Functions.Notify(Translation['labHeist'].notifications.failLoot, 'error')
+            QBCore.Functions.Notify(Translation['containerHeist'].notifications.failLoot, 'error')
 
             if not policeAlert then
                 policeAlert = true
@@ -205,7 +211,7 @@ function table_contains(table, val)
     Citizen.CreateThread(function()
         Citizen.Wait(heisTime)
         if not finished then
-            QBCore.Functions.Notify(Translation['labHeist'].notifications.noTime, "error") -- LANG
+            QBCore.Functions.Notify(Translation['universal'].notifications.noTime, "error") -- LANG
             createContainerTargets()
         end
     end)
