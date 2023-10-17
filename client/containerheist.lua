@@ -13,9 +13,8 @@ Citizen.CreateThread(function()
     --RequestAndLoadModel(Config.ContainerBoss.model)
     RequestModel(Config.ContainerBoss.model)
     while not HasModelLoaded(Config.ContainerBoss.model) do
-    Wait(0)
+        Wait(0)
     end
-    print('Model loaded: '..Config.ContainerBoss.model)
     local ped = CreatePed(0, Config.ContainerBoss.model, Config.ContainerBoss.location.x, Config.ContainerBoss.location.y, Config.ContainerBoss.location.z - 1, Config.ContainerBoss.location.w, false, false)
     FreezeEntityPosition(ped, true)
     SetEntityInvincible(ped, true)
@@ -27,18 +26,13 @@ Citizen.CreateThread(function()
                 type = 'client',
                 label = Translation['containerHeist'].target.startHeist:format(containerFee), -- LANG
                 icon = 'fas fa-comment',
-                event = 'it-smallheists:client:startContainerHeist',
+                action = function()
+                    startContainerHeist()
+                end,
             },
         },
         distance = 2.5
     })
-end)
-
--- Why is this here?
--- So you can restart the script without without restarting the server and the target still works!
-RegisterNetEvent('it-smallheists:client:startContainerHeist')
-AddEventHandler('it-smallheists:client:startContainerHeist', function()
-    startContainerHeist()
 end)
 
 function startContainerHeist()
@@ -188,7 +182,7 @@ end
 
 function removeAllContainerTargets()
     if containers ~= nil then
-        for k, v in containers do
+        for k, v in ipairs(containers) do
             if next(containers) ~= nil then
                 exports['qb-target']:RemoveZone('container-'..k)
             end
@@ -207,7 +201,7 @@ function table_contains(table, val)
  end
 
 
- function containerHeistTimer()
+function containerHeistTimer()
     Citizen.CreateThread(function()
         Citizen.Wait(heisTime)
         if not finished then
@@ -216,3 +210,9 @@ function table_contains(table, val)
         end
     end)
 end
+
+AddEventHandler('onResourceStop', function(resource)
+    if resource ~= GetCurrentResourceName() then return end
+    print('[it-smallheists] Stopping Container Heist')
+    removeAllContainerTargets()
+end)

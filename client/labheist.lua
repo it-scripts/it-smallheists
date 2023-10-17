@@ -1,7 +1,4 @@
 -- Last Modification: 16/10/2023
--- TODO:
--- 6. Create a better way to spawn the lab boss
-
 local securityBypass = false
 local npcSpawned = false
 local labcoords1 = Config.LabHackOne
@@ -17,88 +14,85 @@ local hackingTime = Config.HackingTime * 1000
 local mailTime = Config.MailTime * 1000
 
 -- This will spawn the Lab Boss
-CreateThread(function()
-    exports['qb-target']:SpawnPed({
-        model = Config.LabBoss.model,
-        coords = Config.LabBoss.location,  
-        minusOne = true, -- Set this to true if your ped is hovering above the ground but you want it on the ground (OPTIONAL)
-        freeze = true,
-        invincible = true,
-        blockevents = true,
-        scenario = Config.LabBoss.scenario,
-        target = {
-            options = {
-                {
-                    icon = "fas fa-comment",
-                    label = Translation['labHeist'].target.startRaidLab,
-                    action = function()
-                        startLabRaid()
-                    end
-                },
-                {
-                    type = "server", -- This only shows up if the user as the items in his inventory
-                    event = "it-smallheists:server:reciveLabPayment",
-                    icon = "fas fa-hand",
-                    label = Translation['labHeist'].target.getPayment,
-                    item = {
-                        "lab-usb",
-                        "lab-samples",
-                        "lab-files",
-                    },
+Citizen.CreateThread(function()
+
+    RequestModel(Config.LabBoss.model)
+    while not HasModelLoaded(Config.LabBoss.model) do
+        Wait(0)
+    end
+    local ped = CreatePed(0, Config.LabBoss.model, Config.LabBoss.location.x, Config.LabBoss.location.y, Config.LabBoss.location.z - 1, Config.LabBoss.location.w, false, false)
+    FreezeEntityPosition(ped, true)
+    SetEntityInvincible(ped, true)
+    SetBlockingOfNonTemporaryEvents(ped, true)
+
+    exports['qb-target']:AddTargetEntity(ped, {
+        options = {
+            {
+                type = 'client',
+                icon = "fas fa-comment",
+                label = Translation['labHeist'].target.startRaidLab,
+                action = function()
+                    startLabRaid()
+                end
+            },
+            {
+                type = "server", -- This only shows up if the user as the items in his inventory
+                event = "it-smallheists:server:reciveLabPayment",
+                icon = "fas fa-hand",
+                label = Translation['labHeist'].target.getPayment,
+                item = {
+                    "lab-usb",
+                    "lab-samples",
+                    "lab-files",
                 },
             },
-          distance = 2.5,
         },
+        distance = 2.5,
     })
 end)
 
-
 function startLabRaid()
-    --if currentCops >= Config.PoliceRequired then
-        --QBCore.Functions.Notify(Lang:t{labHeist.notifications.noCops}, "error") -- LANG
-        --return
+    if currentCops < Config.PoliceRequired then
+        QBCore.Functions.Notify(Translation[#universal].notifications.notEnoughtPolice, "error") -- LANG
+        return
+    end
     if activeJob then
-        QBCore.Functions.Notify(Translation['labHeist'].notifications.activeJob, "error")
+        QBCore.Functions.Notify(Translation['universal'].notifications.activeJob, "error")
         return
     end
     QBCore.Functions.TriggerCallback('it-smallheists:server:getHeistStatus', function(status)
-        local isActive = false
-        if status == 'inactive' then
-            isActive = false
-        else
-            isActive = true
+        print(status)
+        if status == 'cooldown' then
+            QBCore.Functions.Notify(Translation['universal'].notifications.cooldown, "error")
+            return
+        elseif status == 'active' then
+            QBCore.Functions.Notify(Translation['universal'].notifications.activeHeist, "error")
+            return
         end
+        activeJob = true
+        finished = false
+        cleanUpLabHeist(true)
+        TriggerEvent('animations:client:EmoteCommandStart', {"crossarms"})
+        TriggerServerEvent('it-smallheists:server:setHeistStatus', 'lab', 'active')
 
-        if not isActive then
-            
-            activeJob = true
-            finished = false
-            cleanUpLabHeist(true)
-            TriggerEvent('animations:client:EmoteCommandStart', {"type"})
-            TriggerServerEvent('it-smallheists:server:setHeistStatus', 'lab', 'active')
+        QBCore.Functions.Progressbar('pickup', Translation['labHeist'].progessBars.pickup, hackingTime, false, true, {
+            disableMovement = true,
+            disableCarMovement = true,
+            disableMouse = false,
+        }, {}, {}, {}, function() -- Done
 
-            QBCore.Functions.Progressbar('pickup', Translation['labHeist'].progessBars.pickup, hackingTime, false, true, {
-                disableMovement = true,
-                disableCarMovement = true,
-                disableMouse = false,
-            }, {}, {}, {}, function() -- Done
+            TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+            QBCore.Functions.Notify(Translation['universal'].notifications.location, 'primary')
+            Wait(mailTime)
+            sendMail(Translation['labHeist'].mail.sender, Translation['labHeist'].mail.subject, Translation['labHeist'].mail.messages.heistStart)
+            exportTarget('targetOne')
+            exportTarget('securityTarget')
 
-                TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-                QBCore.Functions.Notify(Translation['labHeist'].notifications.location, 'primary')
-                Wait(mailTime)
-                sendMail(Translation['labHeist'].mail.sender, Translation['labHeist'].mail.subject, Translation['labHeist'].mail.messages.heistStart)
-                exportTarget('targetOne')
-                exportTarget('securityTarget')
+            SetNewWaypoint(labcoords1)
 
-                SetNewWaypoint(labcoords1)
-
-            end, function() -- Cancel
-                QBCore.Functions.Notify(Translation['labHeist'].notifications.canceled, 'error')
-            end)
-                
-        else 
-            QBCore.Functions.Notify(Translation['labHeist'].notifications.activeHeist, "error")
-        end
+        end, function() -- Cancel
+            QBCore.Functions.Notify(Translation['universal'].notifications.canceled, 'error')
+        end)
     end, "lab")
 end
 
@@ -149,7 +143,7 @@ function startLabHack()
             end, Config.LabHackType, Config.LabHackTime, 0)
 
         end, function() --Cancel
-            QBCore.Functions.Notify(Translation['labHeist'].notifications.canceled, 'error', 2000)
+            QBCore.Functions.Notify(Translation['universal'].notifications.canceled, 'error', 2000)
         end)
     else
         QBCore.Functions.Notify(Translation['labHeist'].notifications.noHackingDevice, 'error', 3000)
@@ -177,7 +171,7 @@ function startLabHack2()
         cleanUpLabHeist(false)
         
     end, function()
-        QBCore.Functions.Notify(Translation['labHeist'].notifications.canceled, 'error', 2000)
+        QBCore.Functions.Notify(Translation['universal'].notifications.canceled, 'error', 2000)
     end)
 end
 
@@ -215,7 +209,7 @@ function bypassLabGuardAlarm()
                 end
             end, Config.LabHackType, Config.BypassHackTime, 0)
         end, function()
-            QBCore.Functions.Notify(Translation['labHeist'].notifications.canceled, 'error', 2000)
+            QBCore.Functions.Notify(Translation['universal'].notifications.canceled, 'error', 2000)
         end)
 
     else
@@ -255,38 +249,44 @@ function spawnLabGuards()
 
     local ped = PlayerPedId()
     local randomGun = Config.LabGuardWeapons[math.random(1, #Config.LabGuardWeapons)]
-    local waveID = 'wave-'..math.random(1, 9999)
+    -- create uniq waveID for each wave and store it in the labSecurity table
+    local waveID = math.random(1, 999999)
 
     SetPedRelationshipGroupHash(ped, 'PLAYER')
     AddRelationshipGroup('labPatrol')
 
     for k, v in pairs(Config.LabSecurity['labpatrol']) do
         loadModel(v.model)
-        labSecurity[wave][k] = CreatePed(26, GetHashKey(v.model), v.coords, v.heading, true, false)
-        NetworkRegisterEntityAsNetworked(labSecurity[wave][k])
-        local networkID = NetworkGetNetworkIdFromEntity(labSecurity[wave][k])
+        local patrolPed = CreatePed(26, GetHashKey(v.model), v.coords, v.heading, true, false)
+        NetworkRegisterEntityAsNetworked(patrolPed)
+        local networkID = NetworkGetNetworkIdFromEntity(patrolPed)
         SetNetworkIdCanMigrate(networkID, true)
         SetNetworkIdExistsOnAllMachines(networkID, true)
-        SetPedRandomComponentVariation(labSecurity[wave][k], 0)
-        SetPedRandomProps(labSecurity[wave][k])
-        SetEntityAsMissionEntity(labSecurity[wave][k])
-        SetEntityVisible(labSecurity[wave][k], true)
-        SetPedRelationshipGroupHash(labSecurity[wave][k], 'labPatrol')
-        SetPedAccuracy(labSecurity[wave][k], Config.LabGuardAccuracy)
-        SetPedArmour(labSecurity[wave][k], 100)
-        SetPedCanSwitchWeapon(labSecurity[wave][k], true)
-        SetPedDropsWeaponsWhenDead(labSecurity[wave][k], false)
-        SetPedFleeAttributes(labSecurity[wave][k], 0, false)
-        SetPedCombatAttributes(labSecurity[wave][k], 46, true)
-        SetPedCombatAttributes(labSecurity[wave][k], 5, true)
-        SetPedCombatAttributes(labSecurity[wave][k], 0, true)
-        GiveWeaponToPed(labSecurity[wave][k], GetHashKey(randomGun), 999, false, true)
-        TaskGoToEntity(labSecurity[wave][k], ped, -1, 1.0, 10.0, 1073741824, 0)
+        SetPedRandomComponentVariation(patrolPed, 0)
+        SetPedRandomProps(patrolPed)
+        SetEntityAsMissionEntity(patrolPed)
+        SetEntityVisible(patrolPed, true)
+        SetPedRelationshipGroupHash(patrolPed, 'labPatrol')
+        SetPedAccuracy(patrolPed, Config.LabGuardAccuracy)
+        SetPedArmour(patrolPed, 100)
+        SetPedCanSwitchWeapon(patrolPed, true)
+        SetPedDropsWeaponsWhenDead(patrolPed, false)
+        SetPedFleeAttributes(patrolPed, 0, false)
+        SetPedCombatAttributes(patrolPed, 46, true)
+        SetPedCombatAttributes(patrolPed, 5, true)
+        SetPedCombatAttributes(patrolPed, 0, true)
+        GiveWeaponToPed(patrolPed, GetHashKey(randomGun), 999, false, true)
+        TaskGoToEntity(patrolPed, ped, -1, 1.0, 10.0, 1073741824, 0)
 
         local random = math.random(1, 2)
         if random == 2 then
-            TaskGuardCurrentPosition(labSecurity[wave][k], 10.0, 10.0, 1)
+            TaskGuardCurrentPosition(patrolPed, 10.0, 10.0, 1)
         end
+        -- Create a new list in the labSecurity table
+        if labSecurity[waveID] == nil then
+            labSecurity[waveID] = {}
+        end
+        table.insert(labSecurity[waveID], patrolPed)
     end
 
     SetRelationshipBetweenGroups(0, 'labPatrol', 'labPatrol')
@@ -303,6 +303,7 @@ function exportTarget(targetLocation)
         }, {
             options = {
                 {
+                    type = 'client',
                     action = function()
                         startLabHack()
                     end,
@@ -324,6 +325,7 @@ function exportTarget(targetLocation)
         }, {
             options = {
                 {
+                    type = 'client',
                     action = function()
                         startLabHack2()
                     end,
@@ -344,6 +346,7 @@ function exportTarget(targetLocation)
         }, {
             options = {
                 {
+                    type = 'client',
                     action = function()
                         bypassLabGuardAlarm()
                     end,
@@ -390,3 +393,9 @@ function sendLog(message)
         TriggerServerEvent('it-smallheists:server:sendLog', message)
     end
 end
+
+AddEventHandler('onResourceStop', function(resource)
+    if resource ~= GetCurrentResourceName() then return end
+    print('[it-smallheists] Stopping Lab Heist')
+    cleanUpLabHeist(true)
+end)

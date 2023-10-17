@@ -25,7 +25,7 @@ Config.MailTime = 10 -- Time in seconds to wait for the mail to arrive
 
 --=== HACKING SETTINGS ===--
 Config.HackItem = 'electronickit' -- Item required to start the hacking
-Config.HackingTime = 20 -- Time in seconds for hacking progressbars / Time bevore the MiniGame starts
+Config.HackingTime = 5 -- Time in seconds for hacking progressbars / Time bevore the MiniGame starts
 
 Config.LabHackType = 'numeric' -- can be alphabet, numeric, alphanumeric, greek, braille, runes
 Config.LabHackTime = 60 -- Time in seconds to hack the Lab door
@@ -38,7 +38,6 @@ Config.LabHeistTime = 600 -- Time in seconds to complete the heist
 Config.LabBoss = { -- Ped for starting the Lab heist you can change every setting for the ped
     model = 's_m_y_westsec_01',
     location = vector4(2363.2644, 2520.1455, 46.6677, 325.7810),
-    scenario = 'WORLD_HUMAN_GUARD_STAND',
 }
 
 Config.LabPayment = math.random(100000, 200000) -- Amount of money you get from the heist set this to 0 to disable money reward
@@ -84,7 +83,6 @@ Config.ContainerHeistTime = 600 -- Time in seconds to complete the heist
 Config.ContainerBoss = {
     model = 'cs_floyd',
     location = vector4(723.0292, -838.2554, 24.4890, 272.4795),
-    scenario = 'WORLD_HUMAN_GUARD_STAND',
 }
 
 Config.ContainerItem = 'lockpick' -- Item required to open a container
