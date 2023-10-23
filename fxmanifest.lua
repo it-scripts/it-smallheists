@@ -4,7 +4,7 @@ game 'gta5'
 author 'Inseltreff'
 description 'Rewritten version of qb-miniheists'
 
-version '1.2.1'
+version '1.2.2'
 
 shared_scripts {
     'config.lua',

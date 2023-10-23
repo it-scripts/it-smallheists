@@ -82,6 +82,6 @@ Translation = {
             startHeist = "Get Tip (%s$)", -- %s = amount
             container = "Open Container",
         },
-        policeAlert = "Someone tries to open the container at the docks"
-    }
+        policeAlert = "Someone tries to open the container at the docks",
+    },
 }

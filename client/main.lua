@@ -17,7 +17,7 @@ end
 
 function hasPhone()
     if Config.PhoneScript == 'none' then return true end
-    for k, v in Config.PhoneNames do
+    for k, v in ipairs(Config.PhoneNames) do
         if hasItem(v) then
             return true
         end
