@@ -88,3 +88,9 @@ function removeBlip (blip)
     if not DoesBlipExist(blip) then return end
     RemoveBlip(blip)
 end
+
+function sendLog(message)
+    if Config.EnableLog then
+        TriggerServerEvent('it-smallheists:server:sendLog', message)
+    end
+end
