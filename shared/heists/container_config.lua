@@ -6,7 +6,7 @@ Config.ContainerBoss = {
     location = vector4(675.0380, -2725.8582, 7.1711, 178.8531),
 }
 
-Config.ContainerItem = 'lockpick' -- Item required to open a container
+Config.ContainerItem = 'weld' -- Item required to open a container
 Config.BreakChange = 50 -- Chance in % to break the item while opening a container
 
 Config.ContainerFee = math.random(1000, 5000) -- Amount of money you have to pay to get container locations

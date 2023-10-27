@@ -42,6 +42,15 @@ Config.PoliceAlert = {
 }
 
 --[[
+    Here you can set the amount of time you have to complete a heist
+]]
+
+Config.HeistTime = {
+    ['lab'] = 600, -- Time in seconds to complete the Lab heist
+    ['container'] = 600, -- Time in seconds to complete the Container heist
+}
+
+--[[
     Here you can set the cooldown between two heists
 ]]
 

@@ -11,8 +11,8 @@ Config.LabPayment = math.random(100000, 200000) -- Amount of money you get from 
 
 Config.LabRewardAmount = math.random(2, 3) -- Amount of items you get from the heist set this to 0 to disable item reward
 Config.LabRewards = {
-    'weapon_pistol',
-    'weapon_pistol_mk2',
+    'electronickit',
+    'sandwich',
 }
 
 --== LAB MINIGAME SETTINGS ==--
