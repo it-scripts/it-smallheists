@@ -1,9 +1,17 @@
 QBCore = exports['qb-core']:GetCoreObject()
+finished = false
 activeJob = false
 currentCops = 0
 language = Config.Language
 
--- This is the handler for the cop count, you can change this to anything you want as this is by default the qb-policejob event
+
+--[[
+    Here you can find all functions that are used by all heists you can change to your own systems
+    If you search for a specific function and you can't find it, it's probably in
+    on of the heists client files
+]]
+
+-- Feel free to change the functions below to your own systems
 RegisterNetEvent('police:SetCopCount', function(amount)
     CurrentCops = amount
 end)
@@ -58,19 +66,8 @@ function sendMail(mailSender, mailSubject, mailMessage)
     end
 end
 
-function loadModel(model)
-    if type(model) == 'number' then
-        model = model
-    else
-        model = GetHashKey(model)
-    end
-    while not HasModelLoaded(model) do
-        RequestModel(model)
-        Citizen.Wait(0)
-    end
-end
-
 function createBlip(coords, text, sprite, color, scale, display, shortRange)
+    debugMessage('Creating blip with text: ' .. text)
     local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
     SetBlipSprite(blip, sprite)
     SetBlipDisplay(blip, display)
@@ -83,14 +80,26 @@ function createBlip(coords, text, sprite, color, scale, display, shortRange)
     return blip
 end
 
+function startHeistTimer(heist, time)
+    CreateThread(function()
+        Wait(heisTime)
+        if not finished then
+            sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_NO_TIME'], "error")
+            if heist == 'container' then createContainerTargets() return end
+            if heist == 'lab' then createJewelleryTargets() return end
+        end
+    end)
+end
+
 function removeBlip (blip)
+    debugMessage('Trying to remove blip: ' .. blip.text .. '')
     if blip == nil then return end
     if not DoesBlipExist(blip) then return end
     RemoveBlip(blip)
 end
 
-function sendLog(message)
+function debugMessage(message)
     if Config.EnableLog then
-        TriggerServerEvent('it-smallheists:server:sendLog', message)
+        TriggerServerEvent('it-smallheists:server:debugMessage', message)
     end
 end
