@@ -30,7 +30,7 @@ local function checkResourceVersion(err, responseText, headers)
         return
     end
 
-    local changes = remoteVersionFile.changes
+    local changes = remoteVersionFile.message
     local priority = remoteVersionFile.priority
 
     local updateMessage = " "
@@ -46,7 +46,7 @@ local function checkResourceVersion(err, responseText, headers)
     print("^5------------ ^7IT-SMALLHEISTS ^5------------")
     print(updateMessage)
     print("^3Your Version: ^8" .. currentVersionFile.version .. "^3 Remote Version: ^2" .. remoteVersionFile.version .. "^3")
-    print("^3Changes: ^2" .. remoteVersionFile.changes .. "")
+    print("^3Changes: ^2" .. remoteVersionFile.message .. "")
     print("^3Download: ^2https://github.com/" .. updatePath .. "")
     print("^5--------------------------------------------")
     print(" ")
