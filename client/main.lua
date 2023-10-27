@@ -1,18 +1,25 @@
 QBCore = exports['qb-core']:GetCoreObject()
 activeJob = false
 currentCops = 0
+language = Config.Language
 
 -- This is the handler for the cop count, you can change this to anything you want as this is by default the qb-policejob event
 RegisterNetEvent('police:SetCopCount', function(amount)
     CurrentCops = amount
 end)
 
-AddEventHandler('onResourceStop', function(resource)
-    if resource ~= GetCurrentResourceName() then return end
-end)
-
 function hasItem(item)
     return QBCore.Functions.HasItem(item)
+end
+
+function sendMessage(message, type)
+    if type == 'error' then
+        QBCore.Functions.Notify(message, "error")
+    elseif type == 'success' then
+        QBCore.Functions.Notify(message, "success")
+    else
+        QBCore.Functions.Notify(message, "primary")
+    end
 end
 
 function hasPhone()
