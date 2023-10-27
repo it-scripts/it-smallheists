@@ -69,6 +69,7 @@ RegisterNetEvent('it-smallheists:server:reciveLabPayment', function()
     local reward = Config.LabPayment
 
     for k, v in recItems do
+        -- TODO: Check if player has item in inventory to prevent exploit
         player.Functions.RemoveItem(v, 1)
         TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[v], 'remove')
     end
@@ -93,8 +94,8 @@ RegisterNetEvent('it-smallheists:Server:removeMoney', function(type, amount, rea
 end)
 
 
-RegisterNetEvent('it-smallheists:server:sendLog', function(message)
-    print('[it-smallheists] '..message)
+RegisterNetEvent('it-smallheists:server:debugMessage', function(message)
+    print('[DEBUG]: '..message)
 end)
 
 

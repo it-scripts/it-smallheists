@@ -4,7 +4,6 @@ local npcSpawned = false
 local labcoords1 = Config.LabHackOne
 local labcoords2 = Config.LabHackTwo
 local labcoords3 = Config.LabSecurityHack
-local finished = false
 local blips = {}
 local labSecurity = {}
 
@@ -14,7 +13,7 @@ local hackingTime = Config.HackingTime * 1000
 local mailTime = Config.MailTime * 1000
 
 -- This will spawn the Lab Boss
-Citizen.CreateThread(function()
+CreateThread(function()
 
     RequestModel(Config.LabBoss.model)
     while not HasModelLoaded(Config.LabBoss.model) do
@@ -383,8 +382,8 @@ function removeTarget(targetLocation)
 end
 
 function startHeistTimer()
-    Citizen.CreateThread(function()
-        Citizen.Wait(heisTime)
+    CreateThread(function()
+        Wait(heisTime)
         if not finished then
             sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_NO_TIME'], "error")
             cleanUpLabHeist(false)

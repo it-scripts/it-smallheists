@@ -1,14 +1,13 @@
-local finished = false
 local containers = {}
 local containerFee = Config.ContainerFee
 
 local policeAlert = false
 
-local heistTime = Config.ContainerHeistTime
-local mailTime = Config.MailTime * 1000
+local heistTime = Config.HeistTime['container'] * 1000
+local mailTime = Config.MailTime['container'] * 1000
 
 
-Citizen.CreateThread(function()
+CreateThread(function()
 
     RequestModel(Config.ContainerBoss.model)
     while not HasModelLoaded(Config.ContainerBoss.model) do
@@ -35,17 +34,20 @@ Citizen.CreateThread(function()
 end)
 
 function startContainerHeist()
+    -- Check if player is in a job
+    debugMessage('Player job status: ' .. tostring(activeJob) .. '
     if activeJob then
         sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_ACTIVE_JOB'], 'error')
         return
     end
+    debugMessage('Player has a phone: ' .. tostring(hasPhone()))
     if not hasPhone() then
         sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_NO_PHONE']:format('Handy'), 'error')
         return
     end
 
     QBCore.Functions.TriggerCallback('it-smallheists:server:getHeistStatus', function(status)
-        print(status)
+        debugMessage('Heist status: ' .. status)
         if status == 'cooldown' then
             sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_COOLDOWN'], 'error')
             return
@@ -56,6 +58,7 @@ function startContainerHeist()
 
         QBCore.Functions.TriggerCallback('it-smallheists:server:getPlayerMoney', function(money)
             local hasMoney = money >= containerFee
+            debugMessage('Player has enough money: (' .. money .. '/' .. containerFee .. ')'
             if not hasMoney then
                 sendMessage(Locales[language]['CONTAINER_HEIST_NOTIFICATION_NO_MONEY'], 'error')
                 return
@@ -77,13 +80,17 @@ function startContainerHeist()
                 local containerAmount = math.random(Config.MinContainer, Config.MaxContainer)
                 local locationString = ''
 
+                debugMessage('Container amount: ' .. containerAmount)
+
                 while #containers < containerAmount do
                     local container = Config.Container[math.random(1, #Config.Container)]
+                    debugMessage('Container: ' .. container.id)
                     if not table_contains(containers, container) then
                         table.insert(containers, container)
                         locationString = locationString..container.location..'<br/>'
                     end
                 end
+                debugMessage('Container locations: ' .. locationString)
                 createContainerTargets()
 
                 TriggerEvent('animations:client:EmoteCommandStart', {"c"})
@@ -100,6 +107,7 @@ end
 
 function openContainer(contID)
     local hasItem = hasItem(Config.ContainerItem)
+    debugMessage('Player has item: ' .. tostring(hasItem))
     if not hasItem then
         sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_NO_ITEM']:format(Config.ContainerItem), 'error')
         return
@@ -159,6 +167,7 @@ end
 
 function createContainerTargets()
     for k, v in ipairs(containers) do
+        debugMessage('Creating container target: ' .. v.location)
         exports['qb-target']:AddBoxZone('container-'..k, v.coords, 1, 1, {
             name = 'container-'..k,
             heading = 350,
@@ -180,6 +189,7 @@ function createContainerTargets()
 end
 
 function removeContainerTarget(target)
+    debugMessage('Removing container target: ' .. target)
     exports['qb-target']:RemoveZone('container-'..target)
     containers[target] = nil
 end
@@ -189,6 +199,7 @@ function removeAllContainerTargets()
         if #containers == 0 then return end
         if not next(containers) then return end
         for k, v in ipairs(containers) do
+            debugMessage('Removing container target: ' .. k)
             exports['qb-target']:RemoveZone('container-'..k)
         end
     end
@@ -206,8 +217,8 @@ end
 
 
 function containerHeistTimer()
-    Citizen.CreateThread(function()
-        Citizen.Wait(heisTime)
+    CreateThread(function()
+        Wait(heisTime)
         if not finished then
             sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_NO_ITEM'], "error")
             createContainerTargets()
