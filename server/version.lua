@@ -14,7 +14,7 @@ local function checkResourceVersion(err, responseText, headers)
     if responseText == nil then
         print(" ")
         print("^5------------ ^7IT-SMALLHEISTS ^5------------")
-        print('^8 ERROR: ^0Failed to check for update.')
+        print('^8ERROR: ^0Failed to check for update.')
         print("^5--------------------------------------------")
         print(" ")
         return
