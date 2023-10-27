@@ -23,7 +23,7 @@ local function checkResourceVersion(err, responseText, headers)
     if currentVersionFile.version == remoteVersionFile.version then
         print(" ")
         print("^5------------ ^7IT-SMALLHEISTS ^5------------")
-        print("^2 IT-SMALLHEISTS is up to date!")
+        print("^2IT-SMALLHEISTS is up to date!")
         print("^3Your Version: ^2" .. currentVersionFile.version .. "^3 Remote Version: ^2" .. remoteVersionFile.version .. "^3")
         print("^5--------------------------------------------")
         print(" ")
