@@ -22,10 +22,10 @@ local function checkResourceVersion(err, responseText, headers)
     remoteVersionFile = parseJson(responseText)
     if currentVersionFile.version == remoteVersionFile.version then
         print(" ")
-        print("^5------------ ^7IT-SMALLHEISTS ^5------------")
+        print("^5------------------------------- ^7IT-SMALLHEISTS ^5-------------------------------")
         print("^2IT-SMALLHEISTS is up to date!")
         print("^3Your Version: ^2" .. currentVersionFile.version .. "^3 Remote Version: ^2" .. remoteVersionFile.version .. "^3")
-        print("^5--------------------------------------------")
+        print("^5----------------------------------------------------------------------------------")
         print(" ")
         return
     end
@@ -43,12 +43,12 @@ local function checkResourceVersion(err, responseText, headers)
     end
 
     print(" ")
-    print("^5------------ ^7IT-SMALLHEISTS ^5------------")
+    print("^5------------------------------- ^7IT-SMALLHEISTS ^5-------------------------------")
     print(updateMessage)
     print("^3Your Version: ^8" .. currentVersionFile.version .. "^3 Remote Version: ^2" .. remoteVersionFile.version .. "^3")
-    print("^3Changes: ^2" .. remoteVersionFile.message .. "")
-    print("^3Download: ^2https://github.com/" .. updatePath .. "")
-    print("^5--------------------------------------------")
+    print("^3Changes: ^7" .. remoteVersionFile.message .. "")
+    print("^3Download: ^7https://github.com/" .. updatePath .. "")
+    print("^5----------------------------------------------------------------------------------")
     print(" ")
 end
 
