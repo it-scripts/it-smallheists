@@ -1,5 +1,13 @@
 local webhook = "https://discord.com/api/webhooks/*********/*******************************" -- Discord Webhook Link
 
+
+RegisterNetEvent('it-smallheists:server:sendWebhook')
+AddEventHandler('it-smallheists:server:sendWebhook', function(title, message, color, ping)
+    local src = source
+    sendWebhook(src, title, message, color, ping)
+end)
+
+
 function sendWebhook(source, title, message, color, ping)
     
     local steamID = 'NA'
@@ -12,7 +20,7 @@ function sendWebhook(source, title, message, color, ping)
     local nameSource = GetPlayerName(source)
 
     for k,v in pairs(GetPlayerIdentifiers(source)) do 
-        --print(v) -- prints all Identifiers // DEPUG
+        TriggerEvent('it-smallheists:server:debugMessage', 'Identifier: '..v')
         if string.sub(v, 1, string.len("steam:")) == "steam:" then
             steamIDS = v
         elseif string.sub(v, 1, string.len("license:")) == "license:" then
@@ -27,7 +35,7 @@ function sendWebhook(source, title, message, color, ping)
     end
 
     local embed = {
-            ["color"] = color,
+            ["color"] = if color ~= nil then color else 16711680 end,
             ["author"] = {
                 ["name"] = "Inseltreff Roleplay",
                 ["icon_url"] = avatar,
