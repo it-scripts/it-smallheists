@@ -34,11 +34,13 @@ Config.PhoneNames = { -- Add the item names of your phones here
 Config.PoliceRequired = {
     ['lab'] = 0, -- Police Required for Lab Heist
     ['container'] = 0, -- Police Required for Container Heist
+    ['atm'] = 0, -- Police Required for ATM Heist
 }
 
 Config.PoliceAlert = {
     ['lab'] = true, -- Set to true to enable police alert for the Lab heist
     ['container'] = true, -- Set to true to enable police alert for the Container heist
+    ['atm'] = true, -- Set to true to enable police alert for the ATM heist
 }
 
 --[[
@@ -57,6 +59,7 @@ Config.HeistTime = {
 Config.HeistCooldown = {
     ['lab'] = 3600, -- Cooldown in seconds between two Lab heists
     ['container'] = 3600, -- Cooldown in seconds between two MW heists
+    ['atm'] = 3600, -- Cooldown in seconds between two ATM heists
 }
 
 --[[
