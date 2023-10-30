@@ -20,7 +20,7 @@ function sendWebhook(source, title, message, color, ping)
     local nameSource = GetPlayerName(source)
 
     for k,v in pairs(GetPlayerIdentifiers(source)) do 
-        TriggerEvent('it-smallheists:server:debugMessage', 'Identifier: '..v')
+        TriggerEvent('it-smallheists:server:debugMessage', 'Identifier: '..v')')
         if string.sub(v, 1, string.len("steam:")) == "steam:" then
             steamIDS = v
         elseif string.sub(v, 1, string.len("license:")) == "license:" then
@@ -35,7 +35,7 @@ function sendWebhook(source, title, message, color, ping)
     end
 
     local embed = {
-            ["color"] = if color ~= nil then color else 16711680 end,
+            ["color"] = color,
             ["author"] = {
                 ["name"] = "Inseltreff Roleplay",
                 ["icon_url"] = avatar,
