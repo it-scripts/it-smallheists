@@ -32,12 +32,12 @@ end)
 RegisterNetEvent('it-smallheists:server:heistCooldown', function(type)
     if type == "container" then
         heistsStatus[type] = 'cooldown'
-        Citizen.SetTimeout(Config.HeistCooldownContainer * 1000, function()
+        Citizen.SetTimeout(Config.HeistCooldown['container'] * 1000, function()
             heistsStatus[type] = 'inactive'
         end)
     elseif type == "lab" then
         heistsStatus[type] = 'cooldown'
-        Citizen.SetTimeout(Config.HeistCooldownLab * 1000, function()
+        Citizen.SetTimeout(Config.HeistCooldown['lab'] * 1000, function()
             heistsStatus[type] = 'inactive'
         end)
     end
@@ -91,6 +91,13 @@ RegisterNetEvent('it-smallheists:Server:removeMoney', function(type, amount, rea
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
     player.Functions.RemoveMoney(type, amount, reason)
+end)
+
+RegisterNetEvent('it-smallheists:server:giveMoney', function(type, amount, reason)
+    local src = source
+    local player = QBCore.Functions.GetPlayer(src)
+    if not player then return end
+    player.Functions.AddMoney(type, amount, reason)
 end)
 
 

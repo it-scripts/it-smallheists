@@ -3,7 +3,7 @@ finished = false
 activeJob = false
 currentCops = 0
 language = Config.Language
-
+local blips = {}
 
 --[[
     Here you can find all functions that are used by all heists you can change to your own systems
@@ -13,7 +13,7 @@ language = Config.Language
 
 -- Feel free to change the functions below to your own systems
 RegisterNetEvent('police:SetCopCount', function(amount)
-    CurrentCops = amount
+    currentCops = amount
 end)
 
 function hasItem(item)
@@ -77,6 +77,7 @@ function createBlip(coords, text, sprite, color, scale, display, shortRange)
     BeginTextCommandSetBlipName("STRING")
     AddTextComponentString(text)
     EndTextCommandSetBlipName(blip)
+    table.insert(blips, blip)
     return blip
 end
 
@@ -84,18 +85,20 @@ function startHeistTimer(heist, time)
     CreateThread(function()
         Wait(heisTime)
         if not finished then
+            finished = true
             sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_NO_TIME'], "error")
-            if heist == 'container' then createContainerTargets() return end
-            if heist == 'lab' then createJewelleryTargets() return end
+            if heist == 'container' then containerCleanUp() return end -- Missing cleanup task
+            if heist == 'lab' then cleanUpLabHeist(false) return end
         end
     end)
 end
 
-function removeBlip (blip)
-    debugMessage('Trying to remove blip: ' .. blip.text .. '')
+function removeBlip(blip)
+    debugMessage('Trying to remove blip: ' .. blip .. '')
     if blip == nil then return end
     if not DoesBlipExist(blip) then return end
     RemoveBlip(blip)
+    table_remove(blips, blip)
 end
 
 function debugMessage(message)
@@ -103,3 +106,47 @@ function debugMessage(message)
         TriggerServerEvent('it-smallheists:server:debugMessage', message)
     end
 end
+
+function table_contains(table, val)
+    for i=1,#table do
+       if table[i] == val then 
+          return true
+       end
+    end
+    return false
+end
+
+function table_remove(table, val)
+    for i=1,#table do
+       if table[i] == val then 
+          table.remove(table, i)
+       end
+    end
+end
+
+function sendDispatch(message, coords)
+    local _coords = vector2(coords.x, coords.y)
+    TriggerEvent('emergencydispatch:emergencycall:new', "police", message, _coords, true)
+end
+
+AddEventHandler('onResourceStop', function(resource)
+    if resource ~= GetCurrentResourceName() then return end
+    debugMessage('Stopping resource: ' .. resource)
+    
+    -- Clear all blips
+    if #blips == 0 then return end
+    if not next(blips) then return end
+    for k, v in ipairs(blips) do
+        removeBlip(v)
+    end
+
+    -- Clear Container Heist
+    removeAllContainerTargets()
+
+    -- Clear Lab Heist
+    cleanUpLabHeist(true)
+
+    -- Clear ATM Heist
+    exports['qb-target']:RemoveTargetModel(Config.ATMProps, Locales[language]['ATM_ROBBERY_TARGET_HACK_ATM'])
+
+end)
