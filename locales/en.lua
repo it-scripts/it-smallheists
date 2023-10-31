@@ -58,4 +58,13 @@ Locales['en'] = {
     ['CONTAINER_HEIST_TARGET_START_HEIST'] = "Get Tip (%s$)", -- %s = amount
     ['CONTAINER_HEIST_TARGET_CONTAINER'] = "Open Container",
 
+    ['ATM_ROBBERY_NOTIFICATION_FAIL_HACK'] = "Pin incorect",
+    ['ATM_ROBBERY_NOTIFICATION_BREACH'] = "Firewall breach detected, come back later",
+    ['ATM_ROBBERY_NOTIFICATION_POLICE_ALERT'] = "Automatic message: Firewall breach detected",
+
+    ['ATM_ROBBERY_PROGRESSBAR_PLUG_IN'] = "Plugging in disruptor",
+    ['ATM_ROBBERY_PROGRESSBAR_GET_CASH'] = "Getting Cash",
+
+    ['ATM_ROBBERY_TARGET_HACK_ATM'] = "Setup RFID Disruptor",
+
 }

@@ -2,7 +2,7 @@ QBCore = exports['qb-core']:GetCoreObject()
 finished = false
 activeJob = false
 currentCops = 0
-language = Config.Language
+language = 'en' or Config.Language
 local blips = {}
 
 --[[
@@ -40,29 +40,34 @@ function hasPhone()
     return false
 end
 
+--[[
+    Here you can add your own Phone Script to the heists
+    Just follow the patern below and it should work
+]]
+
 function sendMail(mailSender, mailSubject, mailMessage)
     if Config.PhoneScript == 'qb' then
         TriggerServerEvent('qb-phone:server:sendNewMail', {sender = mailSender, subject = mailSubject,
-            message = mailMessage, --"Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!" ,
+            message = mailMessage,
         })
     elseif Config.PhoneScript == 'qs' then
         TriggerServerEvent('qs-smartphone:server:sendNewMail', {sender = mailSender, subject = mailSubject,
-            message = mailMessage, --"Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!" ,
+            message = mailMessage,
             button = {}
         })
     elseif Config.PhoneScript == 'road' then
         TriggerServerEvent('roadphone:receiveMail', {sender = mailSender, subject = mailSubject,
-            message = mailMessage, --"Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!" ,
+            message = mailMessage,
             image = '/public/html/static/img/icons/app/mail.png',
             button = {}
         })
     elseif Config.PhoneScript == 'gks' then
         TriggerServerEvent('gksphone:NewMail', {sender = mailSender, image = '/html/static/img/icons/mail.png', subject = mailSubject,
-        message = mailMessage, --"Heres the location. You Need to hack the firewall through the computer in laboratory 1 and then download that research. <br/> i will email again when i see the firewall is down!" ,
+        message = mailMessage,
         button = {}
         })
     else
-        QBCore.Functions.Notify(mailMessage, "primary")
+        sendMessage(mailMessage, "primary")
     end
 end
 
@@ -87,16 +92,16 @@ function startHeistTimer(heist, time)
         if not finished then
             finished = true
             sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_NO_TIME'], "error")
-            if heist == 'container' then containerCleanUp() return end -- Missing cleanup task
+            if heist == 'container' then containerCleanUp() return end
             if heist == 'lab' then cleanUpLabHeist(false) return end
         end
     end)
 end
 
 function removeBlip(blip)
-    debugMessage('Trying to remove blip: ' .. blip .. '')
     if blip == nil then return end
     if not DoesBlipExist(blip) then return end
+    debugMessage('Trying to remove blip: ' .. blip .. '')
     RemoveBlip(blip)
     table_remove(blips, blip)
 end

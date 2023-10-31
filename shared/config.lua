@@ -17,6 +17,9 @@ Config.Language = 'en'
     -- gks = gks phone
     -- none = no phone script
     You also have to add the item names of your phones to Config.PhoneNames below
+
+    if you want to use your own phone script, you can do this by adding it to
+    the client/main.lua file, you can find more information about this in the file
 ]]
 
 Config.PhoneScript = 'qs'
@@ -59,7 +62,7 @@ Config.HeistTime = {
 Config.HeistCooldown = {
     ['lab'] = 3600, -- Cooldown in seconds between two Lab heists
     ['container'] = 3600, -- Cooldown in seconds between two MW heists
-    ['atm'] = 3600, -- Cooldown in seconds between two ATM heists
+    ['atm'] = 1800, -- Cooldown in seconds between two ATM heists
 }
 
 --[[

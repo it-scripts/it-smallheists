@@ -1,4 +1,4 @@
-local RecentRobbery = 0, 0, 0
+local RecentRobbery = {0, 0, 0}
 -- QBCore Exports / Variables --
 
 function UseATMDisruptor()
@@ -19,7 +19,7 @@ function UseATMDisruptor()
                 }, {}, {}, function()
                     ClearPedTasks(PlayerPedId())
                     sendDispatch(Locales[language]['ATM_HEIST_NOTIFICATION_HACK_ATM'], GetEntityCoords(PlayerPedId()))
-                    RecentRobbery = GetGameTimer() + Config.HeistCooldown
+                    RecentRobbery = GetGameTimer() + (Config.HeistCooldown['atm'] * 1000)
                     exports['ps-ui']:Scrambler(function(success)
                         if success then
                             QBCore.Functions.Progressbar('atm_grabing_cash', Locales[language]['ATM_ROBBERY_PROGRESSBAR_GET_CASH'], Config.ATMProgressBarInteger, false, true, {
@@ -33,7 +33,7 @@ function UseATMDisruptor()
                                 flags = 17,
                             }, {}, {}, function()
                                 ClearPedTasks(PlayerPedId())
-                                TriggerServerEvent('it-smallheists:server:AddMoney', Config.ATMRewardMoney)
+                                TriggerServerEvent('it-smallheists:server:AddMoney', 'cash', Config.ATMRewardMoney, 'ATM Robbery Reward')
                             end)
                         else
                             sendMessage(Locales[language]['ATM_HEIST_NOTIFICATION_HACK_FAILED'], 'error')

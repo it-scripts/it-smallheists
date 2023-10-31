@@ -1,6 +1,5 @@
 QBCore = exports['qb-core']:GetCoreObject()
 
-
 -- Status:
 -- active = heist is active
 -- cooldown = heist is on cooldown
@@ -57,6 +56,7 @@ RegisterNetEvent('it-smallheists:server:giveItem', function(item, amount)
     if not player then return end
     player.Functions.AddItem(item, amount)
     TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[item], 'add')
+    TriggerEvent('it-smallheists:server:debugMessage', 'Giving '..amount..' '..item..' to '.. src)
 end)
 
 
@@ -73,7 +73,6 @@ RegisterNetEvent('it-smallheists:server:reciveLabPayment', function()
         player.Functions.RemoveItem(v, 1)
         TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[v], 'remove')
     end
-
     player.Functions.AddMoney(Config.MoneyType, reward, 'Lab heist Payment')
 
 end)
@@ -83,6 +82,7 @@ QBCore.Functions.CreateCallback('it-smallheists:server:getPlayerMoney', function
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
     local money = player.PlayerData.money[type]
+    TriggerEvent('it-smallheists:server:debugMessage', 'Getting '..money..' '..type..' from '..src)
     cb(money)
 end)
 
@@ -90,6 +90,7 @@ RegisterNetEvent('it-smallheists:Server:removeMoney', function(type, amount, rea
     local src = source
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
+    TriggerEvent('it-smallheists:server:debugMessage', 'Removing '..amount..' '..type..' from '..src..' for '..reason)
     player.Functions.RemoveMoney(type, amount, reason)
 end)
 
@@ -97,16 +98,11 @@ RegisterNetEvent('it-smallheists:server:giveMoney', function(type, amount, reaso
     local src = source
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
+    TriggerEvent('it-smallheists:server:debugMessage', 'Giving '..amount..' '..type..' to '..src..' for '..reason)
     player.Functions.AddMoney(type, amount, reason)
 end)
 
 
 RegisterNetEvent('it-smallheists:server:debugMessage', function(message)
     print('[DEBUG]: '..message)
-end)
-
-
-RegisterNetEvent('it-smallheists:server:alertCops')
-AddEventHandler('it-smallheists:server:alertCops', function(coords, message)
-TriggerEvent('emergencydispatch:emergencycall:new', "police", message, vector3(coords.x, coords.y, coords.z), true)
 end)
