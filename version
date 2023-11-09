@@ -1,5 +1,4 @@
 {
-    "version": "1.2.1",
-    "priority": "medium",
-    "message": "Fix some minor bugs"
+    "version": "1.2.2",
+    "message": "Changes to the version checker"
 }
