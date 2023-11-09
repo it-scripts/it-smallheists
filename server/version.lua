@@ -20,8 +20,8 @@ local function checkResourceVersion(err, responseText, headers)
         print("^5======================================")
         return
     end
-    remoteVersionFile = parseJson(responseText)
-    if currentVersionFile.version == remoteVersionFile.version then
+    
+    if currentVersionFile.version >= remoteVersionFile.version then
         print("^5======================================")
         print("^2[it-smallheists] - The Script is up to date!")
         print("^7Current Version: ^4" .. remoteVersionFile.version .. "^7.")
@@ -29,8 +29,6 @@ local function checkResourceVersion(err, responseText, headers)
         print("^5======================================")
         return
     end
-
-    local changes = remoteVersionFile.message
 
     print("^5======================================")
     print('^8[it-smallheists] - New update available now!')
