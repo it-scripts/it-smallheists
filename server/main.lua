@@ -106,3 +106,24 @@ end)
 RegisterNetEvent('it-smallheists:server:debugMessage', function(message)
     print('[DEBUG]: '..message)
 end)
+
+
+RegisterServerEvent('it-smallheists:server:setGraveState', function(CurGrave)
+    local OldGrave = nil
+    local src = source
+    local OldGrave = CurGrave
+    if Config.Graves[OldGrave].Looted == false then 
+        ResetGraveTimer(OldGrave)
+        TriggerClientEvent('it-smallheists:client:SetGraveState', -1, OldGrave, true)
+    end
+    Config.Graves[OldGrave].Looted = true
+end)
+
+function ResetGraveTimer(OldGrave)
+    local num = Config.GraveTimer  -- 5 minutes 45 seconds
+    local time = tonumber(num)
+    SetTimeout(time, function()
+        Config.Graves[OldGrave].Looted = false
+        TriggerClientEvent('it-smallheists:Client:ResetGrave', -1, OldGrave, false)
+    end)
+end

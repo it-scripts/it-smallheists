@@ -36,7 +36,7 @@ CreateThread(function()
                     {
                         icon = "fa-solid fa-trowel",
                         label = "Dig Grave",
-                        event = "LENT-Graverobbery:Client:StartDigging",
+                        event = "it-smallheists:Client:StartDigging",
                     },
                 },
         
@@ -49,11 +49,11 @@ CreateThread(function()
 end)
 
 -- [[ Events ]] -- 
-RegisterNetEvent('LENT-Graverobbery:Client:ResetGrave', function(OldGrave, state)
+RegisterNetEvent('it-smallheists:client:ResetGrave', function(OldGrave, state)
     Config.Graves[OldGrave].Looted = state
 end)
 
-RegisterNetEvent("LENT-Graverobbery:Client:StartDigging", function()
+RegisterNetEvent("it-smallheists:client:StartDigging", function()
     if isDigging == false and QBCore.Functions.HasItem('shovel') then
         local ped = PlayerPedId()
         local playerPos = GetEntityCoords(ped)
@@ -72,8 +72,8 @@ RegisterNetEvent("LENT-Graverobbery:Client:StartDigging", function()
                     }, {}, {}, {}, function() -- Done
                         Diggin = true
                         TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-                        TriggerServerEvent('LENT-Graverobbery:Server:SetGraveState', CurGrave)
-                        TriggerServerEvent('LENT-Graverobbery:Server:GiveItems', CurGrave)
+                        TriggerServerEvent('it-smallheists:server:setGraveState', CurGrave)
+                        TriggerServerEvent('it-smallheists:server:GiveItems', CurGrave)
                         policeAlert()
                     end, function() -- Cancel
                         TriggerEvent('animations:client:EmoteCommandStart', {"c"})
