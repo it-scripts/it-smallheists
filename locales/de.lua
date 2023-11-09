@@ -66,4 +66,8 @@ Locales['de'] = {--
     ['ATM_ROBBERY_PROGRESSBAR_GET_CASH'] = "Getting Cash",
 
     ['ATM_ROBBERY_TARGET_HACK_ATM'] = "Setup RFID Disruptor",
+
+    ['GRAVE_ROBERY_NOTIFICATION_ALREADY_LOOTED'] = "Scheinbar war jemand schneller als du",
+
+    ['GRAVE_ROBERY_TARGET_DIG'] = "Ausgraben",
 }

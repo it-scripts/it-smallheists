@@ -67,4 +67,7 @@ Locales['en'] = {
 
     ['ATM_ROBBERY_TARGET_HACK_ATM'] = "Setup RFID Disruptor",
 
+    ['GRAVE_ROBERY_NOTIFICATION_ALREADY_LOOTED'] = "Seems like someone was faster",
+
+    ['GRAVE_ROBERY_TARGET_DIG'] = "Dig",
 }
