@@ -4,8 +4,10 @@ Config.GraveBlip = true
 -- [[ Grave Reset Timer ]] --
 Config.GraveTimer = 300000 -- Default: 300000 = 5 Minutes
 
+Config.GraveItem = "shovel"
+
 -- [[ Rewards ]] --
-Config.GraveSpecialChance = 75
+Config.GraveSpecialChance = 15
 Config.GraveChanceItem = "weapon_pistol"
 Config.GraveRewardChance = 20
 Config.GraveRewards ={

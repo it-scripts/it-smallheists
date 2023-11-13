@@ -67,7 +67,12 @@ Locales['de'] = {--
 
     ['ATM_ROBBERY_TARGET_HACK_ATM'] = "Setup RFID Disruptor",
 
-    ['GRAVE_ROBERY_NOTIFICATION_ALREADY_LOOTED'] = "Scheinbar war jemand schneller als du",
+    ['GRAVE_ROBERY_NOTIFICATION_ALREADY_DIGGING'] = "Du gräbst schon!",
+    ['GRAVE_ROBERY_NOTIFICATION_POLICE_ALERT'] = "Jemand gräbt auf dem Friedhof",
+    ['GRAVE_ROBERY_NOTIFICATION_ALREADY_LOOTED'] = "Jemand war schneller",
+    ['GRAVE_ROBERY_NOTIFICATION_FAIL_LOOT'] = "Du hast nichts gefunden",
 
-    ['GRAVE_ROBERY_TARGET_DIG'] = "Ausgraben",
+    ['GRAVE_ROBERY_PROGRESSBAR_DIGGING'] = "Graben...",
+    
+    ['GRAVE_ROBERY_TARGET_DIG'] = "Grab ausheben",
 }
