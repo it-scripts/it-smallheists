@@ -1,5 +1,4 @@
-local webhook = "https://discord.com/api/webhooks/*********/*******************************" -- Discord Webhook Link
-
+local webhookUrl= "https://discord.com/api/webhooks/*********/*******************************" -- Discord Webhook Link
 
 RegisterNetEvent('it-smallheists:server:sendWebhook')
 AddEventHandler('it-smallheists:server:sendWebhook', function(title, message, color, ping)
@@ -7,52 +6,67 @@ AddEventHandler('it-smallheists:server:sendWebhook', function(title, message, co
     sendWebhook(src, title, message, color, ping)
 end)
 
-
 function sendWebhook(source, title, message, color, ping)
-    
-    local steamID = 'NA'
+
+    local postData = {}
+
     local license = 'NA'
-    local xbl = 'NA'
-    local live = 'NA'
     local discordID = 'NA'
     local fivem = 'NA'
 
-    local nameSource = GetPlayerName(source)
+    local nameSource = 'NA'
 
-    for k,v in pairs(GetPlayerIdentifiers(source)) do 
-        TriggerEvent('it-smallheists:server:debugMessage', 'Identifier: '..v')')
-        if string.sub(v, 1, string.len("steam:")) == "steam:" then
-            steamIDS = v
-        elseif string.sub(v, 1, string.len("license:")) == "license:" then
-            licenseS = v
-        elseif string.sub(v, 1, string.len("xbl:")) == "xbl:" then
-            xbl = v
-        elseif string.sub(v, 1, string.len("discord:")) == "discord:" then
-            discordID = string.gsub(v, "discord:", "")
-        elseif string.sub(v, 1, string.len("fivem:")) == "fivem:" then
-            fivem = v
+    if source == 0 then
+        source = 'Console'
+    end
+
+    if source ~= 'Console' then
+
+        nameSource = GetPlayerName(source)
+
+        for k,v in pairs(GetPlayerIdentifiers(source)) do 
+            if string.sub(v, 1, string.len("license:")) == "license:" then
+                license = v
+            elseif string.sub(v, 1, string.len("discord:")) == "discord:" then
+                discordID = string.gsub(v, "discord:", "")
+            elseif string.sub(v, 1, string.len("fivem:")) == "fivem:" then
+                fivem = v
+            end
         end
     end
 
     local embed = {
-            ["color"] = color,
-            ["author"] = {
-                ["name"] = "Inseltreff Roleplay",
-                ["icon_url"] = avatar,
-                ["url"] = avatar,
+        ["color"] = Config.Webhook['color'] or color,
+        ["author"] = {
+            ["name"] = Config.Webhook['name'],
+            ["icon_url"] = Config.Webhook['avatar'],
+            ["url"] = Config.Webhook['avatar'],
+        },
+        ["fields"] = {
+            {
+                ["name"] = "**Player Details: **"..nameSource..' ('..source..')',
+                ["value"] = "**Discord ID:** <@"..discordID.."> *("..discordID..")* \n**License:** "..license.."\n**fivem:** "..fivem,
+                ["inline"] = false,
             },
-            ["fields"] = {
-                {
-                    ["name"] = "**Player Details: **"..nameSource,
-                    ["value"] = " **Player ID: "..source.."**\n**Discord ID:** <@"..discordID.."> *("..discordID..")* \n**Steam ID:** "..steamID.."\n**License:** "..license.."\n**xbl:** "..xbl.."\n**live:** "..live.."\n**fivem:** "..fivem.."",
-                    ["inline"] = false,
-                },
-            },
-            ["title"] = title,
-            ["description"] = message,
-        }
+        },
+        ["title"] = title,
+        ["description"] = message,
+        ["footer"] = {
+            ["text"] = os.date("%c"),
+            ["icon_url"] = Config.Webhook['avatar'],
+        },
+    }
     if ping then
-        embed[1]["content"] = "@everyone"
+        postData = {username = Config.Webhook['name'], avatar_url = Config.Webhook['avatar'], content = '@everyone', embeds = {}}
+    else
+        postData = {username = Config.Webhook['name'], avatar_url = Config.Webhook['avatar'], content = ' ', embeds = {}}
     end
-    PerformHttpRequest(webhook, function(err, text, headers) end, 'POST', json.encode({username = "Inseltreff Taxi-Log", embeds = embed}), { ['Content-Type'] = 'application/json' })
+    postData.embeds[#postData.embeds + 1] = embed
+    PerformHttpRequest(webhookUrl, function(err, text, headers) 
+    if err == 200 or err == 204 then
+        TriggerEvent('it-smallheists:server:debugMessage', 'Webhook sent successfully')
+    else
+        TriggerEvent('it-smallheists:server:debugMessage', 'Webhook failed to send '..err)
+    end
+    end, 'POST', json.encode(postData), { ['Content-Type'] = 'application/json' })
 end
