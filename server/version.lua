@@ -43,6 +43,7 @@ end
 
 AddEventHandler('onResourceStart', function(resource)
     if resource == GetCurrentResourceName() then
+        Wait(5000)
         updatePath = "inseltreff-net/it-smallheists"
         PerformHttpRequest("https://raw.githubusercontent.com/"..updatePath.."/"..Config.Branch.."/version", checkResourceVersion, "GET")
     end

@@ -29,14 +29,17 @@ QBCore.Functions.CreateCallback("it-smallheists:server:isCooldownActive", functi
 end)
 
 RegisterNetEvent('it-smallheists:server:heistCooldown', function(type)
+    TriggerEvent('it-smallheists:server:debugMessage', 'Starting '..type..' cooldown')
     if type == "container" then
         heistsStatus[type] = 'cooldown'
         Citizen.SetTimeout(Config.HeistCooldown['container'] * 1000, function()
+            TriggerEvent('it-smallheists:server:debugMessage', 'Container cooldown ended')
             heistsStatus[type] = 'inactive'
         end)
     elseif type == "lab" then
         heistsStatus[type] = 'cooldown'
         Citizen.SetTimeout(Config.HeistCooldown['lab'] * 1000, function()
+            TriggerEvent('it-smallheists:server:debugMessage', 'Lab cooldown ended')
             heistsStatus[type] = 'inactive'
         end)
     end
@@ -68,12 +71,12 @@ RegisterNetEvent('it-smallheists:server:reciveLabPayment', function()
     local recItems = {'lab-usb', 'lab-samples', 'lab-files'}
     local reward = Config.LabPayment
 
-    for k, v in recItems do
+    for k, v in ipairs(recItems) do
         -- TODO: Check if player has item in inventory to prevent exploit
         player.Functions.RemoveItem(v, 1)
         TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[v], 'remove')
     end
-    player.Functions.AddMoney(Config.MoneyType, reward, 'Lab heist Payment')
+    player.Functions.AddMoney(Config.LabMoneyType, reward, 'Lab heist Payment')
 
 end)
 
@@ -104,7 +107,8 @@ end)
 
 
 RegisterNetEvent('it-smallheists:server:debugMessage', function(message)
-    print('[DEBUG]: '..message)
+    if not Config.Debug then return end
+    print('^7[^2DEBUG^7]: ^4'..message)
 end)
 
 

@@ -104,7 +104,7 @@ local function startContainerHeist()
     end
     debugMessage('Player has a phone: ' .. tostring(hasPhone()))
     if not hasPhone() then
-        sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_NO_PHONE']:format('Handy'), 'error')
+        sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_NO_ITEM']:format('Handy'), 'error')
         return
     end
 
@@ -146,7 +146,6 @@ local function startContainerHeist()
 
                 while #containers < containerAmount do
                     local container = Config.Container[math.random(1, #Config.Container)]
-                    debugMessage('Container: ' .. container.id)
                     if not table_contains(containers, container) then
                         table.insert(containers, container)
                         locationString = locationString..container.location..'<br/>'

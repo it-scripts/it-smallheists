@@ -88,7 +88,7 @@ end
 
 function startHeistTimer(heist, time)
     CreateThread(function()
-        Wait(heisTime)
+        Wait(time)
         if not finished then
             finished = true
             sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_NO_TIME'], "error")
@@ -107,7 +107,7 @@ function removeBlip(blip)
 end
 
 function debugMessage(message)
-    if Config.EnableLog then
+    if Config.Debug then
         TriggerServerEvent('it-smallheists:server:debugMessage', message)
     end
 end
@@ -121,10 +121,10 @@ function table_contains(table, val)
     return false
 end
 
-function table_remove(table, val)
-    for i=1,#table do
-       if table[i] == val then 
-          table.remove(table, i)
+function table_remove(targetTable, val)
+    for i=1,#targetTable do
+       if targetTable[i] == val then 
+            table.remove(targetTable, i)
        end
     end
 end
@@ -153,5 +153,10 @@ AddEventHandler('onResourceStop', function(resource)
 
     -- Clear ATM Heist
     exports['qb-target']:RemoveTargetModel(Config.ATMProps, Locales[language]['ATM_ROBBERY_TARGET_HACK_ATM'])
+
+    -- Remove Grave Zones
+    for k, v in pairs(Config.Graves) do
+        exports['qb-target']:RemoveZone(v["GraveName"])
+    end
 
 end)

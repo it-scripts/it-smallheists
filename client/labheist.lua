@@ -8,7 +8,7 @@ local labSecurity = {}
 -- Lab Heist Timings
 local heistTime = Config.HeistTime['lab'] * 1000 -- From shared/config.lua
 local mailTime = Config.MailTime['lab'] * 1000 -- From shared/config.lua
-local hackingTime = Config.LabHackTime * 1000 -- From shared/heists/lab_config.lua
+local hackingTime = Config.HackingTime * 1000 -- From shared/heists/lab_config.lua
 
 -- Lab heist start
 --[[
@@ -76,9 +76,9 @@ function startLabHeist()
     end
 
     -- Check if player has a phone
-    debugMessage('Has Phone: src'..PlayerId()..' Phone:'..tostring(hasPhone()))
+    debugMessage('Has Phone: src' ..GetPlayerServerId(source)..' Phone:'..tostring(hasPhone()))
     if not hasPhone() then
-        sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_NO_PHONE'], 'error')
+        sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_NO_ITEM']:format('Handy'), 'error')
         return
     end
 
@@ -118,7 +118,7 @@ function startLabHeist()
             exportTarget('targetOne')
             exportTarget('securityTarget')
             startHeistTimer('lab', heistTime)
-            SetNewWaypoint(labcoords1)
+            SetNewWaypoint(labcoords['hackOne'].x, labcoords['hackOne'].y)
 
         end, function() -- Cancel
             sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_CANCELED'], 'error')
@@ -172,7 +172,7 @@ function labComputerHack()
                     
                     if securityBypass == false then
                         sendMessage(Locales[language]['LAB_HEIST_NOTIFICATION_GUARDS'], 'error')
-                        spawnLabGuards()
+                        spawnLabGuards('hacking')
                     end
 
                     sendMail(Locales[language]['LAB_HEIST_MAIL_SENDER'], Locales[language]['LAB_HEIST_MAIL_SUBJECT'], Locales[language]['LAB_HEIST_MAIL_MESSAGE_HACK'])
@@ -185,7 +185,7 @@ function labComputerHack()
                 sendMessage(Locales[language]['LAB_HEIST_NOTIFICATION_HACK_FAILED'], 'error')
                 if securityBypass == false then
                     sendMessage(Locales[language]['LAB_HEIST_NOTIFICATION_GUARDS'], 'error')
-                    spawnLabGuards()
+                    spawnLabGuards('hacking')
                 end
             end
         end, Config.LabHackType, Config.LabHackTime, 0)
@@ -203,12 +203,12 @@ function getLabFiles()
         disableMouse = false,
     }, {}, {}, {}, function()
         TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-        TriggerServerEvent('it-miniheists:server:giveItem', 'lab-samples', 1)
-        TriggerServerEvent('it-miniheists:server:giveItem', 'lab-files', 1)
+        TriggerServerEvent('it-smallheists:server:giveItem', 'lab-samples', 1)
+        TriggerServerEvent('it-smallheists:server:giveItem', 'lab-files', 1)
 
         if securityBypass == false then
             sendMessage(Locales[language]['LAB_HEIST_NOTIFICATION_GUARDS'], 'error')
-            spawnLabGuards()
+            spawnLabGuards('resarch')
         end
 
         Wait(mailTime)
@@ -254,7 +254,7 @@ function bypassLabGuardAlarm()
             else
                 TriggerEvent('animations:client:EmoteCommandStart', {"c"})
                 sendMessage(Locales[language]['LAB_HEIST_NOTIFICATION_FAIL_ALARMS'], 'error')
-                spawnLabGuards()
+                spawnLabGuards('resarch')
                 removeTarget('securityTarget')
             end
         end, Config.LabHackType, Config.BypassHackTime, 0)
@@ -287,6 +287,7 @@ function cleanUpLabHeist(clearPeds)
                     if DoesEntityExist(v) then
                         DeleteEntity(v)
                     end
+                    ClearPedEnvDirt(v)
                 end
             end
         end
@@ -388,7 +389,7 @@ end
 --[[
     This function spawns the guards for the heist
 ]]
-function spawnLabGuards()
+function spawnLabGuards(waveName)
 
     local ped = PlayerPedId()
     local randomGun = Config.LabGuardWeapons[math.random(1, #Config.LabGuardWeapons)]
@@ -401,8 +402,13 @@ function spawnLabGuards()
     SetPedRelationshipGroupHash(ped, 'PLAYER')
     AddRelationshipGroup('labPatrol')
 
-    for k, v in pairs(Config.LabSecurity) do
-        loadModel(v.model)
+    for k, v in pairs(Config.LabSecurity[waveName]) do
+
+        RequestModel(v.model)
+        while not HasModelLoaded(v.model) do
+            Wait(0)
+        end
+
         local patrolPed = CreatePed(26, GetHashKey(v.model), v.coords, v.heading, true, false)
         NetworkRegisterEntityAsNetworked(patrolPed)
         local networkID = NetworkGetNetworkIdFromEntity(patrolPed)
@@ -434,6 +440,8 @@ function spawnLabGuards()
         end
         table.insert(labSecurity[waveID], patrolPed)
     end
+
+    debugMessage('Lab Guard Spawned waveID: '..waveID..' Amount: '..#labSecurity[waveID])
 
     SetRelationshipBetweenGroups(0, 'labPatrol', 'labPatrol')
     SetRelationshipBetweenGroups(5, 'labPatrol', 'PLAYER')
