@@ -10,6 +10,20 @@ Locales = Locales or {}
 Config.Language = 'en'
 
 --[[
+    Here you set up the discord webhook, you can find more information about
+    this in the server/webhook.lua file.
+    If you dont know what a webhook is, you can read more about it here:
+    https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
+]]
+Config.Webhook = {
+    ['active'] = true, -- Set to true to enable the webhook
+    ['url'] = nil, -- This will do nothing set you webhook url in server/webhook.lua
+    ['name'] = 'it-smallheists', -- Name for the webhook
+    ['avatar'] = 'https://i.imgur.com/KVtd6OT.png', -- Avatar for the webhook
+    ['color'] = 16711680, -- Default color for the webhook
+}
+
+--[[
     Next you have to choose the phone you want to use, you can choose between:
     -- qb = qb-phone
     -- qs = quasar smartphone
@@ -44,6 +58,7 @@ Config.PoliceAlert = {
     ['lab'] = true, -- Set to true to enable police alert for the Lab heist
     ['container'] = true, -- Set to true to enable police alert for the Container heist
     ['atm'] = true, -- Set to true to enable police alert for the ATM heist
+    ['grave'] = true, -- Set to true to enable police alert for the Graverobbery
 }
 
 --[[

@@ -17,6 +17,7 @@ end)
 
 RegisterNetEvent('it-smallheists:server:setHeistStatus', function(type, status)
     heistsStatus[type] = status
+    sendWebhook(0, 'Heist Status', 'Setting '..type..' Heist status to '..status, 16711680, false)
 end)
 
 QBCore.Functions.CreateCallback("it-smallheists:server:isCooldownActive", function(_, cb, type)
@@ -34,12 +35,14 @@ RegisterNetEvent('it-smallheists:server:heistCooldown', function(type)
         heistsStatus[type] = 'cooldown'
         Citizen.SetTimeout(Config.HeistCooldown['container'] * 1000, function()
             TriggerEvent('it-smallheists:server:debugMessage', 'Container cooldown ended')
+            sendWebhook(0, 'Heist Status', 'Container Heist cooldown ended', 16711680, false)
             heistsStatus[type] = 'inactive'
         end)
     elseif type == "lab" then
         heistsStatus[type] = 'cooldown'
         Citizen.SetTimeout(Config.HeistCooldown['lab'] * 1000, function()
             TriggerEvent('it-smallheists:server:debugMessage', 'Lab cooldown ended')
+            sendWebhook(0, 'Heist Status', 'Lab Heist cooldown ended', 16711680, false)
             heistsStatus[type] = 'inactive'
         end)
     end
@@ -76,6 +79,12 @@ RegisterNetEvent('it-smallheists:server:reciveLabPayment', function()
         player.Functions.RemoveItem(v, 1)
         TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[v], 'remove')
     end
+
+    if reward > Config.LabMaxPayment then
+       sendWebhook(src, 'Lab Payment', 'Player '..src..' tried to get $'..reward..' but the max is $'..Config.LabMaxPayment, 16711680, true)
+    else
+        sendWebhook(src, 'Lab Payment', 'Player '..src..' got $'..reward..' for lab heist', 16711680, false)
+    end
     player.Functions.AddMoney(Config.LabMoneyType, reward, 'Lab heist Payment')
 
 end)
@@ -94,6 +103,7 @@ RegisterNetEvent('it-smallheists:Server:removeMoney', function(type, amount, rea
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
     TriggerEvent('it-smallheists:server:debugMessage', 'Removing '..amount..' '..type..' from '..src..' for '..reason)
+    sendWebhook(src, 'Remove Money', 'Removed '..amount..' '..type..' from '..src..' for '..reason, 16711680, false)
     player.Functions.RemoveMoney(type, amount, reason)
 end)
 
@@ -102,6 +112,7 @@ RegisterNetEvent('it-smallheists:server:giveMoney', function(type, amount, reaso
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
     TriggerEvent('it-smallheists:server:debugMessage', 'Giving '..amount..' '..type..' to '..src..' for '..reason)
+    sendWebhook(src, 'Give Money', 'Gave '..amount..' '..type..' to '..src..' for '..reason, 16711680, false)
     player.Functions.AddMoney(type, amount, reason)
 end)
 
@@ -131,3 +142,7 @@ function ResetGraveTimer(OldGrave)
         TriggerClientEvent('it-smallheists:Client:ResetGrave', -1, OldGrave, false)
     end)
 end
+
+CreateThread(function()
+    sendWebhook(0, 'Script Started', 'it-smallheists Logger Has Started!', nil, false)
+end)

@@ -1,5 +1,21 @@
 local webhookUrl= "https://discord.com/api/webhooks/*********/*******************************" -- Discord Webhook Link
 
+local errors = {
+    [200] = "Everything is fine the webhook message was sent successfully!",
+    [204] = "Everything is fine the webhook message was sent successfully but without any content! (You don't need to worry about this)",
+
+    [400] = "Your webhook message is invalid!",
+    [401] = "Your webhook URL is invalid!",
+    [404] = "Your webhook URL is invalide!",
+    [429] = "You are being rate limited by Discord!",
+    [500] = "Discord is having internal server issues!",
+    [502] = "Discord is having internal server issues!",
+    [503] = "Discord is having internal server issues!",
+    [504] = "Discord is having internal server issues!",
+
+    [nil] = "The webhook message could not be sent because the HTTP request failed!",
+}
+
 RegisterNetEvent('it-smallheists:server:sendWebhook')
 AddEventHandler('it-smallheists:server:sendWebhook', function(title, message, color, ping)
     local src = source
@@ -7,6 +23,8 @@ AddEventHandler('it-smallheists:server:sendWebhook', function(title, message, co
 end)
 
 function sendWebhook(source, title, message, color, ping)
+
+    if not Config.Webhook['active'] then return end
 
     local postData = {}
 
@@ -59,7 +77,7 @@ function sendWebhook(source, title, message, color, ping)
     if ping then
         postData = {username = Config.Webhook['name'], avatar_url = Config.Webhook['avatar'], content = '@everyone', embeds = {}}
     else
-        postData = {username = Config.Webhook['name'], avatar_url = Config.Webhook['avatar'], content = ' ', embeds = {}}
+        postData = {username = Config.Webhook['name'], avatar_url = Config.Webhook['avatar'], embeds = {}}
     end
     postData.embeds[#postData.embeds + 1] = embed
     PerformHttpRequest(webhookUrl, function(err, text, headers) 
@@ -67,6 +85,8 @@ function sendWebhook(source, title, message, color, ping)
         TriggerEvent('it-smallheists:server:debugMessage', 'Webhook sent successfully')
     else
         TriggerEvent('it-smallheists:server:debugMessage', 'Webhook failed to send '..err)
+        print('[WEBHOOK ERROR] ' .. errors[err] .. ' (' .. err .. ')')
+        Config.Webhook['active'] = false
     end
     end, 'POST', json.encode(postData), { ['Content-Type'] = 'application/json' })
 end

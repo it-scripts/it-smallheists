@@ -37,6 +37,7 @@ local function openContainer(contID)
                     for k, v in pairs(loot) do
                         local lootAmount = math.random(Config.LootAmount.min, Config.LootAmount.max)
                         TriggerServerEvent('it-smallheists:server:giveItem', v, lootAmount)
+                        TriggerServerEvent('it-smallheists:server:sendWebhook', 'Container Heist', 'Player '..GetPlayerName(PlayerId())..' looted '..lootAmount..'x '..v..' from Container '..contID, 16711680, false)
                     end
                 end
                 -- Remove container
@@ -156,6 +157,7 @@ local function startContainerHeist()
 
                 TriggerEvent('animations:client:EmoteCommandStart', {"c"})
                 sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_LOCATION'], 'primary')
+                TriggerServerEvent('it-smallheists:server:sendWebhook', 'Container Heist', 'Player '..GetPlayerName(PlayerId())..' started a container heist for '..containerFee..'$ and get '..#containers.." Containers\nLocations:\n"..locationString, 16711680, false)
                 Wait(mailTime)
                 sendMail(Locales[language]['CONTAINER_HEIST_MAIL_SENDER'], Locales[language]['CONTAINER_HEIST_MAIL_SUBJECT'], Locales[language]['CONTAINER_HEIST_MAIL_MESSAGE_LOCATION']..locationString)
                 startHeistTimer('container', heistTime)

@@ -111,6 +111,8 @@ function startLabHeist()
             disableMouse = false,
         }, {}, {}, {}, function() -- Done
 
+            TriggerServerEvent('it-smallheists:server:sendWebhook', 'Lab Heist', 'Player: '..GetPlayerName(PlayerId())..' ('..PlayerId()..') started a lab heist', 16711680, false)
+
             TriggerEvent('animations:client:EmoteCommandStart', {"c"})
             sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_LOCATION'], 'primary')
             Wait(mailTime)
@@ -162,6 +164,8 @@ function labComputerHack()
                     disableMouse = false,
                 }, {}, {}, {}, function() --Done
 
+                    TriggerServerEvent('it-smallheists:server:sendWebhook', 'Lab Heist', 'Player: '..GetPlayerName(PlayerId())..' ('..PlayerId()..') hacked the lab', 16711680, false)
+
                     TriggerEvent('animations:client:EmoteCommandStart', {"c"})
 
                     if Config.PoliceAlertLab then
@@ -202,6 +206,9 @@ function getLabFiles()
         disableCarMovement = true,
         disableMouse = false,
     }, {}, {}, {}, function()
+
+        TriggerServerEvent('it-smallheists:server:sendWebhook', 'Lab Heist', 'Player: '..GetPlayerName(PlayerId())..' ('..PlayerId()..') got the lab files', 16711680, false)
+
         TriggerEvent('animations:client:EmoteCommandStart', {"c"})
         TriggerServerEvent('it-smallheists:server:giveItem', 'lab-samples', 1)
         TriggerServerEvent('it-smallheists:server:giveItem', 'lab-files', 1)
@@ -230,22 +237,22 @@ function bypassLabGuardAlarm()
 
     -- Remove the item from the players inventory
     TriggerServerEvent('it-smallheists:server:removeItem', Config.HackItem, 1)
+    TriggerEvent('animations:client:EmoteCommandStart', {"type"})
     QBCore.Functions.Progressbar('lab_sec', Locales[language]['LAB_HEIST_PROGRESSBAR_SECURITY'], hackingTime, false, true, {
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
     }, {}, {}, {}, function() --Done
-        TriggerEvent('animations:client:EmoteCommandStart', {"type"})
         exports['ps-ui']:Scrambler(function(success)
             if success then
-                Wait(100)
-                TriggerEvent('animations:client:EmoteCommandStart', {"type"})
-                Wait(500)
                 QBCore.Functions.Progressbar('lab_alarms', Locales[language]['LAB_HEIST_PROGRESSBAR_REROUTING'], hackingTime, false, true, {
                     disableMovement = true,
                     isableCarMovement = true,
                     disableMouse = false,
                 }, {}, {}, {}, function() -- Done
+
+                    TriggerServerEvent('it-smallheists:server:sendWebhook', 'Lab Heist', 'Player: '..GetPlayerName(PlayerId())..' ('..PlayerId()..') bypassed the lab security', 16711680, false)
+
                     TriggerEvent('animations:client:EmoteCommandStart', {"c"})
                     sendMessage(Locales[language]['LAB_HEIST_NOTIFICATION_DISABLED_ALARMS'], 'primary')
                     securityBypass = true
@@ -442,6 +449,8 @@ function spawnLabGuards(waveName)
     end
 
     debugMessage('Lab Guard Spawned waveID: '..waveID..' Amount: '..#labSecurity[waveID])
+
+    TriggerServerEvent('it-smallheists:server:sendWebhook', 'Lab Heist', 'Player: '..GetPlayerName(PlayerId())..' ('..PlayerId()..') spawned a new wave of lab guards.\nWave infomrationen:\nWaveID: '..waveID..'\nGuard Amount: '..#labSecurity[waveID], 16711680, false)
 
     SetRelationshipBetweenGroups(0, 'labPatrol', 'labPatrol')
     SetRelationshipBetweenGroups(5, 'labPatrol', 'PLAYER')
