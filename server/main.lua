@@ -71,7 +71,7 @@ RegisterNetEvent('it-smallheists:server:reciveLabPayment', function()
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
 
-    local recItems = {'lab-usb', 'lab-samples', 'lab-files'}
+    local recItems = Config.LabRecItems
     local reward = Config.LabPayment
 
     for k, v in ipairs(recItems) do

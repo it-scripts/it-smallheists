@@ -43,11 +43,7 @@ CreateThread(function()
                 event = "it-smallheists:server:reciveLabPayment",
                 icon = "fas fa-hand",
                 label = Locales[language]['LAB_HEIST_TARGET_GET_PAYMENT'],
-                item = {
-                    "lab-usb",
-                    "lab-samples",
-                    "lab-files",
-                },
+                item = Config.LabRecItems,
             },
         },
         distance = 2.5,
@@ -172,7 +168,7 @@ function labComputerHack()
                         TriggerServerEvent('police:server:policeAlert', Locales[language]['LAB_HEIST_NOTIFICATION_POLICE_ALERT'])
                     end
 
-                    TriggerServerEvent('it-smallheists:server:giveItem', 'lab-usb', 1)
+                    TriggerServerEvent('it-smallheists:server:giveItem', Config.LabRecItems[1], 1)
                     
                     if securityBypass == false then
                         sendMessage(Locales[language]['LAB_HEIST_NOTIFICATION_GUARDS'], 'error')
@@ -210,8 +206,10 @@ function getLabFiles()
         TriggerServerEvent('it-smallheists:server:sendWebhook', 'Lab Heist', 'Player: '..GetPlayerName(PlayerId())..' ('..PlayerId()..') got the lab files', 16711680, false)
 
         TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-        TriggerServerEvent('it-smallheists:server:giveItem', 'lab-samples', 1)
-        TriggerServerEvent('it-smallheists:server:giveItem', 'lab-files', 1)
+
+        for i = 2, #Config.LabRecItems do
+            TriggerServerEvent('it-smallheists:server:giveItem', Config.LabRecItems[i], 1)
+        end
 
         if securityBypass == false then
             sendMessage(Locales[language]['LAB_HEIST_NOTIFICATION_GUARDS'], 'error')

@@ -7,6 +7,13 @@ Config.LabBoss = { -- Ped for starting the Lab heist you can change every settin
 Config.LabPayment = math.random(100000, 200000) -- Amount of money you get from the heist set this to 0 to disable money reward
 Config.LabMoneyType = 'cash' -- Type of money you get from the heist can be 'cash' or 'bank'
 
+--[[
+    Items you need to get the reward from the heist this list must be at least 2 items long.
+    The first item gets the player by hacking into the lab.
+    All other items gets the player from grabbing them at the sconde stage of the heist!
+]]--
+Config.LabRecItems = {'lab-usb', 'lab-samples', 'lab-files'}
+
 Config.LabRewardAmount = math.random(2, 3) -- Amount of items you get from the heist set this to 0 to disable item reward
 Config.LabRewards = {
     'electronickit',
