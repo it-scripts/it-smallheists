@@ -14,7 +14,7 @@ body:
 - type: input
   attributes:
     label: "Version of the Script"
-    description: |
+    description: |-
       Please let us know, which specific version of the Script you used.
       If your version is outdated, maybe try updating and see if that already fixes your problem.
       If you are using the development version, please let us know the commit hash.
@@ -29,21 +29,21 @@ body:
     placeholder: "A bug happened!"
   validations:
     required: true
-  - type: textarea
-    attributes:
-      label: To Reproduce
-      description: Please a detailed description of how to reproduce the bug.
-      placeholder: |- 
-      1. Go to '...'
-      2. Click on '....'
-      3. Scroll down to '....'
-      4. See error
-    validations:
-      required: true
-  - type: textarea
-    attributes:
-      label: Relevant log output
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
-      render: shell
-    validations:
-      required: false
+- type: textarea
+  attributes:
+    label: To Reproduce
+    description: Please a detailed description of how to reproduce the bug.
+    placeholder: |- 
+    1. Go to '...'
+    2. Click on '....'
+    3. Scroll down to '....'
+    4. See error
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Relevant log output
+    description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+    render: shell
+  validations:
+    required: false
