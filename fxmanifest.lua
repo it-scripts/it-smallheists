@@ -2,9 +2,9 @@ fx_version 'cerulean'
 game 'gta5'
 
 author 'Inseltreff'
-description 'A heist script for QBCore'
+description 'A heist script for the QBCore Framework'
 
-version '1.2.4'
+version '1.2.5'
 
 shared_scripts {
     -- config files
@@ -26,7 +26,6 @@ server_scripts {
     'server/version.lua',
     'server/webhook.lua',
     'server/main.lua',
-    'server/functions.lua'
 }
 
 dependencies {
