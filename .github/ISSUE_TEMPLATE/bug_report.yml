@@ -33,10 +33,10 @@ body:
   attributes:
     label: To Reproduce
     description: Please a detailed description of how to reproduce the bug.
-    placeholder: |
-      1.
-      2.
-      3.
+    placeholder: |-
+      First ...
+      Second ...
+      Third ...
       ...
     render: bash
   validations:
