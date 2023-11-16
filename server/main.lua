@@ -1,6 +1,5 @@
 QBCore = exports['qb-core']:GetCoreObject()
 
-
 -- Status:
 -- active = heist is active
 -- cooldown = heist is on cooldown
@@ -18,6 +17,7 @@ end)
 
 RegisterNetEvent('it-smallheists:server:setHeistStatus', function(type, status)
     heistsStatus[type] = status
+    sendWebhook(0, 'Heist Status', 'Setting '..type..' Heist status to '..status, 16711680, false)
 end)
 
 QBCore.Functions.CreateCallback("it-smallheists:server:isCooldownActive", function(_, cb, type)
@@ -30,14 +30,19 @@ QBCore.Functions.CreateCallback("it-smallheists:server:isCooldownActive", functi
 end)
 
 RegisterNetEvent('it-smallheists:server:heistCooldown', function(type)
+    TriggerEvent('it-smallheists:server:debugMessage', 'Starting '..type..' cooldown')
     if type == "container" then
         heistsStatus[type] = 'cooldown'
-        Citizen.SetTimeout(Config.HeistCooldownContainer * 1000, function()
+        Citizen.SetTimeout(Config.HeistCooldown['container'] * 1000, function()
+            TriggerEvent('it-smallheists:server:debugMessage', 'Container cooldown ended')
+            sendWebhook(0, 'Heist Status', 'Container Heist cooldown ended', 16711680, false)
             heistsStatus[type] = 'inactive'
         end)
     elseif type == "lab" then
         heistsStatus[type] = 'cooldown'
-        Citizen.SetTimeout(Config.HeistCooldownLab * 1000, function()
+        Citizen.SetTimeout(Config.HeistCooldown['lab'] * 1000, function()
+            TriggerEvent('it-smallheists:server:debugMessage', 'Lab cooldown ended')
+            sendWebhook(0, 'Heist Status', 'Lab Heist cooldown ended', 16711680, false)
             heistsStatus[type] = 'inactive'
         end)
     end
@@ -57,6 +62,7 @@ RegisterNetEvent('it-smallheists:server:giveItem', function(item, amount)
     if not player then return end
     player.Functions.AddItem(item, amount)
     TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[item], 'add')
+    TriggerEvent('it-smallheists:server:debugMessage', 'Giving '..amount..' '..item..' to '.. src)
 end)
 
 
@@ -65,15 +71,21 @@ RegisterNetEvent('it-smallheists:server:reciveLabPayment', function()
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
 
-    local recItems = {'lab-usb', 'lab-samples', 'lab-files'}
+    local recItems = Config.LabRecItems
     local reward = Config.LabPayment
 
-    for k, v in recItems do
+    for k, v in ipairs(recItems) do
+        -- TODO: Check if player has item in inventory to prevent exploit
         player.Functions.RemoveItem(v, 1)
         TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[v], 'remove')
     end
 
-    player.Functions.AddMoney(Config.MoneyType, reward, 'Lab heist Payment')
+    if reward > Config.LabMaxPayment then
+       sendWebhook(src, 'Lab Payment', 'Player '..src..' tried to get $'..reward..' but the max is $'..Config.LabMaxPayment, 16711680, true)
+    else
+        sendWebhook(src, 'Lab Payment', 'Player '..src..' got $'..reward..' for lab heist', 16711680, false)
+    end
+    player.Functions.AddMoney(Config.LabMoneyType, reward, 'Lab heist Payment')
 
 end)
 
@@ -82,6 +94,7 @@ QBCore.Functions.CreateCallback('it-smallheists:server:getPlayerMoney', function
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
     local money = player.PlayerData.money[type]
+    TriggerEvent('it-smallheists:server:debugMessage', 'Getting '..money..' '..type..' from '..src)
     cb(money)
 end)
 
@@ -89,37 +102,47 @@ RegisterNetEvent('it-smallheists:Server:removeMoney', function(type, amount, rea
     local src = source
     local player = QBCore.Functions.GetPlayer(src)
     if not player then return end
+    TriggerEvent('it-smallheists:server:debugMessage', 'Removing '..amount..' '..type..' from '..src..' for '..reason)
+    sendWebhook(src, 'Remove Money', 'Removed '..amount..' '..type..' from '..src..' for '..reason, 16711680, false)
     player.Functions.RemoveMoney(type, amount, reason)
 end)
 
-
-RegisterNetEvent('it-smallheists:server:sendLog', function(message)
-    print('[it-smallheists] '..message)
+RegisterNetEvent('it-smallheists:server:giveMoney', function(type, amount, reason)
+    local src = source
+    local player = QBCore.Functions.GetPlayer(src)
+    if not player then return end
+    TriggerEvent('it-smallheists:server:debugMessage', 'Giving '..amount..' '..type..' to '..src..' for '..reason)
+    sendWebhook(src, 'Give Money', 'Gave '..amount..' '..type..' to '..src..' for '..reason, 16711680, false)
+    player.Functions.AddMoney(type, amount, reason)
 end)
 
 
-RegisterNetEvent('it-smallheists:server:alertCops')
-AddEventHandler('it-smallheists:server:alertCops', function(coords, message)
-TriggerEvent('emergencydispatch:emergencycall:new', "police", message, vector3(coords.x, coords.y, coords.z), true)
+RegisterNetEvent('it-smallheists:server:debugMessage', function(message)
+    if not Config.Debug then return end
+    print('^7[^2DEBUG^7]: ^4'..message)
 end)
 
---== Update Alerts ==--
-local updatePath
-local resourceName
 
-local function checkVersion(err,responseText, headers)
-    local curVersion = LoadResourceFile(GetCurrentResourceName(), "version")
-    if responseText == nil then print('^1['..resourceName..']^3 ERROR: ^0Failed to check for update.') return end
-    if curVersion ~= nil and responseText ~= nil then
-        if curVersion == responseText then Color = "^2" else Color = "^1" end
-        print('\n^1----------------------------------------------------------------------------------^7')
-        print('^3Latest Version is: ^2'..responseText..'!\n^7Your current version: '..Color..''..curVersion..'^7\nIf needed, update from https://github.com/'..updatePath..'')
-        print('^1----------------------------------------------------------------------------------^7')
+RegisterServerEvent('it-smallheists:server:setGraveState', function(CurGrave)
+    local OldGrave = nil
+    local src = source
+    local OldGrave = CurGrave
+    if Config.Graves[OldGrave].Looted == false then 
+        ResetGraveTimer(OldGrave)
+        TriggerClientEvent('it-smallheists:client:SetGraveState', -1, OldGrave, true)
     end
+    Config.Graves[OldGrave].Looted = true
+end)
+
+function ResetGraveTimer(OldGrave)
+    local num = Config.GraveTimer  -- 5 minutes 45 seconds
+    local time = tonumber(num)
+    SetTimeout(time, function()
+        Config.Graves[OldGrave].Looted = false
+        TriggerClientEvent('it-smallheists:Client:ResetGrave', -1, OldGrave, false)
+    end)
 end
 
 CreateThread(function()
-    updatePath = "inseltreff-net/it-smallheists"
-    resourceName = GetCurrentResourceName()
-    PerformHttpRequest("https://raw.githubusercontent.com/"..updatePath.."/master/version", checkVersion, "GET")
+    sendWebhook(0, 'Script Started', 'it-smallheists Logger Has Started!', nil, false)
 end)
