@@ -5,7 +5,6 @@ title: "[BUG REPORT]: "
 labels: ["bug"]
 assignees: 
   - AllRoundJonU
-
 body:
   - type: markdown
     attributes:
