@@ -1,6 +1,3 @@
--- [[ Yard Blip ]] --
-Config.GraveBlip = true
-
 -- [[ Grave Reset Timer ]] --
 Config.GraveTimer = 300000 -- Default: 300000 = 5 Minutes
 

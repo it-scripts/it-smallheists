@@ -59,6 +59,11 @@ function startDigging()
         return
     end
 
+    if currentCops < Config.PoliceRequired['grave'] then
+        sendMessage(Locales[language]['UNIVERSAL_NOTIFICATION_NO_POLICE'], 'error')
+        return
+    end
+
     local ped = PlayerPedId()
     local playerPos = GetEntityCoords(ped)
     TriggerEvent('animations:client:EmoteCommandStart', {"dig"})

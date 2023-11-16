@@ -50,7 +50,8 @@ Config.PhoneNames = { -- Add the item names of your phones here
 
 Config.PoliceRequired = {
     ['lab'] = 0, -- Police Required for Lab Heist
-    ['container'] = 0, -- Police Required for Container Heis
+    ['container'] = 0, -- Police Required for Container Heist
+    ['grave'] = 0, -- Police Required for Graverobbery
 }
 
 Config.PoliceAlert = {
