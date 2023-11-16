@@ -1,16 +1,16 @@
-name: Bug report
+name: Bug Report
 description: Create a report to help us improve
 title: "[BUG REPORT]: "
 labels: ["bug"]
 assignees: 
   - AllRoundJonU
 body:
-  - type: markdown
-    attributes:
-      value: |-
-        Thanks for taking the time to fill out this bug report!
+- type: markdown
+  attributes:
+    value: |-
+      Thanks for taking the time to fill out this bug report!
 
-        Please keep in mind that this is a Bug Report template, not a help desk. If you need help with using the Script pleas use a other template.
+      Please keep in mind that this is a Bug Report template, not a help desk. If you need help with using the Script pleas use a other template.
 - type: input
   attributes:
     label: "Version of the Script"
@@ -23,7 +23,6 @@ body:
   validations:
     required: true
 - type: textarea
-    id: what-happened
     attributes:
       label: Describe the bug
       description: A clear and concise description of what the bug is.
@@ -31,7 +30,6 @@ body:
     validations:
       required: true
   - type: textarea
-    id: reproduce
     attributes:
       label: To Reproduce
       description: Please a detailed description of how to reproduce the bug.
@@ -43,7 +41,6 @@ body:
     validations:
       required: true
   - type: textarea
-    id: logs
     attributes:
       label: Relevant log output
       description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
