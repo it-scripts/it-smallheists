@@ -14,6 +14,7 @@ Config.LabMoneyType = 'cash' -- Type of money you get from the heist can be 'cas
 ]]--
 Config.LabRecItems = {'lab-usb', 'lab-samples', 'lab-files'}
 
+-- This feature is not implemented yet!
 Config.LabRewardAmount = math.random(2, 3) -- Amount of items you get from the heist set this to 0 to disable item reward
 Config.LabRewards = {
     'electronickit',
