@@ -33,11 +33,12 @@ body:
   attributes:
     label: To Reproduce
     description: Please a detailed description of how to reproduce the bug.
-    placeholder: |-
-    1. Go to "..."
-    2. Click on "...."
-    3. Scroll down to "...."
-    4. See error
+    placeholder: |
+      1.
+      2.
+      3.
+      ...
+    render: bash
   validations:
     required: true
 - type: textarea
