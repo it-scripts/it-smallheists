@@ -4,7 +4,7 @@ game 'gta5'
 author 'Inseltreff'
 description 'A heist script for the QBCore Framework'
 
-version '1.2.5'
+version '1.2.6'
 
 shared_scripts {
     -- config files

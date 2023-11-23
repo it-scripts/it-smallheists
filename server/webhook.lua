@@ -12,8 +12,6 @@ local errors = {
     [502] = "Discord is having internal server issues!",
     [503] = "Discord is having internal server issues!",
     [504] = "Discord is having internal server issues!",
-
-    [nil] = "The webhook message could not be sent because the HTTP request failed!",
 }
 
 RegisterNetEvent('it-smallheists:server:sendWebhook')

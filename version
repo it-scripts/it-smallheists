@@ -1,4 +1,4 @@
 {
-    "version": "1.2.5",
-    "message": "All known issues have been fixed. Please update to the latest version."
+    "version": "1.2.6",
+    "message": "Fix nill value error in webhook.lua"
 }
